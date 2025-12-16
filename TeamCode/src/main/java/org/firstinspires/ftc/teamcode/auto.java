@@ -65,14 +65,14 @@ public class auto extends NextFTCOpMode {
     }
     public Command shoot1() {
         return new SequentialGroup(
-                new ParallelGroup(shooter.INSTANCE.shoot, intake.INSTANCE.upRamp
+                new ParallelGroup(shooter.INSTANCE.shoot(), intake.INSTANCE.upRamp()
                 ), new Delay(5)
         )
                 ;
     }
     public Command pickUp() {
         return new SequentialGroup(
-                intake.INSTANCE.upRamp, new Delay(1)
+                intake.INSTANCE.upRamp(), new Delay(1)
         );
     }
     public Command moveScore1() {

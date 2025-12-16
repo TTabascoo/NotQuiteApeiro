@@ -1,22 +1,17 @@
 package org.firstinspires.ftc.teamcode;
-
 import static org.firstinspires.ftc.teamcode.autoPathConstants.headingStart;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.pickUpAngle;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.scoreAngle;
-
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
-
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -36,43 +31,86 @@ public class auto2 extends NextFTCOpMode {
     public void onInit() {
         buildPaths();
         follower().setStartingPose(startPose);
+        shooter.INSTANCE.stop().schedule();
+        intake.INSTANCE.stop().schedule();
     }
 
     @Override
     public void onUpdate() {
         follower().update();
-        fullAuto().schedule();
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
         telemetry.addData("shooter val: ", shooter.INSTANCE.power());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
+        telemetry.addData("path", follower().getCurrentPath());
+        telemetry.addData("does it work pease", follower().isBusy());
         telemetry.update();
+    }
+    @Override
+    public void onStartButtonPressed() {
+        fullAuto().schedule();
     }
 
     public Command shoot1() {
         return new SequentialGroup(
-                new ParallelGroup(shooter.INSTANCE.shoot, intake.INSTANCE.upRamp
-                ), new Delay(5)
-        )
-                ;
+                shooter.INSTANCE.shoot().and(intake.INSTANCE.upRamp())
+        );
+    }
+    public Command stopRamp() {
+        return new SequentialGroup(
+                shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
+        );
     }
     public Command pickUp() {
         return new SequentialGroup(
-                intake.INSTANCE.upRamp, new Delay(1)
+                intake.INSTANCE.upRamp(),
+                new Delay(1)
         );
     }
+    public Command pause() {
+        return new InstantCommand(() -> follower().pausePathFollowing());
+    }
+    public Command resume() {
+        return new InstantCommand(() -> follower().resumePathFollowing());
+    }
+    public Command score1Path() {
+        return new FollowPath(score1);
+    }
+    public Command pickUpPathSetUp1() {
+        return new FollowPath(pickUpPath1);
+    }
 
+    public Command pickUpPath() {
+        return new FollowPath(pickUp);
+    }
+
+    public Command score2Path() {
+        return new FollowPath(score2);
+    }
+    public Command pickUpPathSetUp2() {
+        return new FollowPath(pickupPath2);
+    }
+    public Command pickUp2() {
+        return new FollowPath(pickUp2);
+    }
+    public Command score3Path() {
+        return new FollowPath(score3);
+    }
     public Command fullAuto() {
         return new SequentialGroup(
-                new FollowPath(score1),
+                score1Path(),
+                pause(),
                 shoot1(),
-                new FollowPath(pickUpPath1),
-                new FollowPath(pickUp).and(pickUp()),
-                new FollowPath(score2),
-                new FollowPath(pickupPath2),
-                new FollowPath(pickUp2).and(pickUp()),
-                new FollowPath(score3),
+                stopRamp(),
+                resume(),
+                pickUpPathSetUp1(),
+                pickUpPath().and(pickUp()),
+                score2Path(),
+                shoot1(),
+                pickUpPathSetUp2(),
+                pickUp2().and(pickUp()),
+                score3Path(),
                 shoot1()
         );
     }
@@ -100,6 +138,7 @@ public class auto2 extends NextFTCOpMode {
                             new BezierLine(startPose, scorePose)
                     )
                     .setLinearHeadingInterpolation(headingStart, scoreAngle)
+                    .addPoseCallback(scorePose, shoot1(), 0.5)
                     .build();
 
             pickUpPath1 = follower()
