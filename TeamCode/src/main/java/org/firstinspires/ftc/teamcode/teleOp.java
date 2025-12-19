@@ -12,6 +12,8 @@ public class teleOp extends OpMode {
     DcMotor frontLeft;
     DcMotor backLeft;
     DcMotor backRight;
+    double intakePower;
+    double shooterPower;
 
     @Override
     public void init() {
@@ -28,8 +30,18 @@ public class teleOp extends OpMode {
 
     @Override
     public void loop() {
-        shooter.setPower(gamepad1.right_trigger);
-        intake.setPower(gamepad1.left_trigger);
+        shooterPower = gamepad1.right_trigger;
+        intakePower = gamepad1.left_trigger;
+        
+        if (gamepad1.dpadDownWasPressed()) {
+            shooterPower = shooterPower*-1;
+        }
+        if (gamepad1.dpadUpWasPressed()) {
+            intakePower = intakePower*-1;
+        }
+
+        shooter.setPower(shooterPower);
+        intake.setPower(intakePower);
 
         double x = gamepad1.left_stick_x;
         double y = gamepad1.left_stick_y;
@@ -44,6 +56,24 @@ public class teleOp extends OpMode {
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
+
+        telemetry.addData("value of gamepad x", x);
+        telemetry.addData("value of gamepad y", y);
+        telemetry.addData("value of gamepad rx", rx);
+        telemetry.addData("fl power", frontLeft.getPower());
+        telemetry.addData("fr power", frontRight.getPower());
+        telemetry.addData("bl power", backLeft.getPower());
+        telemetry.addData("br power", backRight.getPower());
+        telemetry.addData("intake power", intake.getPower());
+        telemetry.addData("shooter power", shooter.getPower());
+        telemetry.addData("intake power val ", intakePower);
+        telemetry.addData("shooter power val", shooterPower);
+        telemetry.update();
+
+
+
+
+
 
     }
 }
