@@ -13,7 +13,7 @@ public class shooter implements Subsystem {
     private shooter () {}
     private MotorEx shooter = new MotorEx("shooter");
     private MotorEx shooter2 = new MotorEx("shooter2");
-    public Command shoot() {
+    public Command shoot(double seconds) {
         Timer CommandTimer = new Timer();
         return new LambdaCommand()
                 .setStart(() -> {
@@ -23,7 +23,7 @@ public class shooter implements Subsystem {
                     new SetPower(shooter, 1);
                     new SetPower(shooter2, 1);
                 })
-                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > 5)
+                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > seconds)
                 .requires(this);
     }
 
@@ -37,7 +37,10 @@ public class shooter implements Subsystem {
                 .requires(this);
     }
 
-    public double power() {
+    public double power1() {
         return shooter.getPower();
+    }
+    public double power2() {
+        return shooter2.getPower();
     }
 }

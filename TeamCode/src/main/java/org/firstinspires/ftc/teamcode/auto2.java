@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -41,7 +40,8 @@ public class auto2 extends NextFTCOpMode {
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
-        telemetry.addData("shooter val: ", shooter.INSTANCE.power());
+        telemetry.addData("shooter val: ", shooter.INSTANCE.power1());
+        telemetry.addData("shooter val2: ", shooter.INSTANCE.power2());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
         telemetry.addData("path", follower().getCurrentPath());
         telemetry.addData("does it work pease", follower().isBusy());
@@ -52,9 +52,9 @@ public class auto2 extends NextFTCOpMode {
         fullAuto().schedule();
     }
 
-    public Command shoot1() {
+    public Command shoot1(double seconds) {
         return new SequentialGroup(
-                shooter.INSTANCE.shoot().and(intake.INSTANCE.upRamp())
+                shooter.INSTANCE.shoot(seconds).and(intake.INSTANCE.upRamp(seconds))
         );
     }
     public Command stopRamp() {
@@ -62,10 +62,9 @@ public class auto2 extends NextFTCOpMode {
                 shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
         );
     }
-    public Command pickUp() {
+    public Command pickUp(double seconds) {
         return new SequentialGroup(
-                intake.INSTANCE.upRamp(),
-                new Delay(1)
+                intake.INSTANCE.upRamp(seconds)
         );
     }
     public Command pause() {
@@ -101,17 +100,17 @@ public class auto2 extends NextFTCOpMode {
         return new SequentialGroup(
                 score1Path(),
                 pause(),
-                shoot1(),
+                shoot1(5),
                 stopRamp(),
                 resume(),
                 pickUpPathSetUp1(),
-                pickUpPath().and(pickUp()),
+                pickUpPath().and(pickUp(1)),
                 score2Path(),
-                shoot1(),
+                shoot1(5),
                 pickUpPathSetUp2(),
-                pickUp2().and(pickUp()),
+                pickUp2().and(pickUp(1)),
                 score3Path(),
-                shoot1()
+                shoot1(5)
         );
     }
     public PathChain score1;
@@ -138,7 +137,6 @@ public class auto2 extends NextFTCOpMode {
                             new BezierLine(startPose, scorePose)
                     )
                     .setLinearHeadingInterpolation(headingStart, scoreAngle)
-                    .addPoseCallback(scorePose, shoot1(), 0.5)
                     .build();
 
             pickUpPath1 = follower()

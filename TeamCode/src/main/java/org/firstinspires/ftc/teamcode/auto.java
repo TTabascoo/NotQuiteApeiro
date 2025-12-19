@@ -59,20 +59,20 @@ public class auto extends NextFTCOpMode {
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
-        telemetry.addData("shooter val: ", shooter.INSTANCE.power());
+        telemetry.addData("shooter1 val: ", shooter.INSTANCE.power1());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
         telemetry.update();
     }
-    public Command shoot1() {
+    public Command shoot1(double seconds) {
         return new SequentialGroup(
-                new ParallelGroup(shooter.INSTANCE.shoot(), intake.INSTANCE.upRamp()
-                ), new Delay(5)
+                new ParallelGroup(shooter.INSTANCE.shoot(seconds), intake.INSTANCE.upRamp(seconds)
+                )
         )
                 ;
     }
-    public Command pickUp() {
+    public Command pickUp(double seconds) {
         return new SequentialGroup(
-                intake.INSTANCE.upRamp(), new Delay(1)
+                intake.INSTANCE.upRamp(seconds)
         );
     }
     public Command moveScore1() {
@@ -95,12 +95,12 @@ public class auto extends NextFTCOpMode {
     public Command autoFull() {
         return new SequentialGroup(
                 moveScore1(),
-                shoot1(),
+                shoot1(2),
                 moveSetPickUp(),
-                movePickUp().and(pickUp()),
+                movePickUp().and(pickUp(2)),
                 avoidBalls(),
                 moveScore2(),
-                shoot1()
+                shoot1(2)
         );
 
     }

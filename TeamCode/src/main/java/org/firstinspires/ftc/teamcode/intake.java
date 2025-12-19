@@ -20,7 +20,7 @@ public class intake implements Subsystem {
         return intake.getPower();
     }
 
-    public Command upRamp() {
+    public Command upRamp(double seconds) {
         Timer CommandTimer = new Timer();
         return new LambdaCommand()
                 .setStart(() -> {
@@ -29,7 +29,7 @@ public class intake implements Subsystem {
                 .setUpdate(() -> {
                     new SetPower(intake, 1);
                 })
-                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > 5)
+                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > seconds)
                 .requires(this);
     }
 
