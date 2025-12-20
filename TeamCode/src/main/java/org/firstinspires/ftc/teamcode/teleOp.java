@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import dev.nextftc.ftc.NextFTCOpMode;
 
 @TeleOp
-public class teleOp extends OpMode {
+public class teleOp extends NextFTCOpMode {
     DcMotor intake;
     DcMotor shooter;
     DcMotor frontRight;
@@ -14,9 +17,15 @@ public class teleOp extends OpMode {
     DcMotor backRight;
     double intakePower;
     double shooterPower;
+    double shooterdirection = 1;
+    double shootermultiplier = 0;
+    double intakemultiplier = 0;
+    double intakedirection = 1;
+    int shooterCounter = 1;
+    int intakeCounter = 1;
 
     @Override
-    public void init() {
+    public void onInit() {
         intake = hardwareMap.get(DcMotor.class, "intake");
         shooter = hardwareMap.get(DcMotor.class, "shooter");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -26,31 +35,43 @@ public class teleOp extends OpMode {
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
-    public void loop() {
-        shooterPower = gamepad1.right_trigger;
-        intakePower = gamepad1.left_trigger;
+    public void onUpdate() {
+        shooterPower = shooterdirection*gamepad1.right_trigger;
+        intakePower = intakedirection * intakemultiplier;
         
         if (gamepad1.dpadDownWasPressed()) {
-            shooterPower = shooterPower*-1;
+            intakedirection = intakedirection*-1;
         }
         if (gamepad1.dpadUpWasPressed()) {
-            intakePower = intakePower*-1;
+            shooterdirection = shooterdirection*-1;
         }
 
-        shooter.setPower(shooterPower);
+
+        if (gamepad1.bWasPressed()) {
+            intakeCounter = intakeCounter + 1;
+        }
+        if (intakeCounter % 2 ==0 ) {
+            intakemultiplier = 1;
+        } else {
+            intakemultiplier = 0;
+        }
+
         intake.setPower(intakePower);
+        shooter.setPower(shooterPower);
 
         double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
+        double y = -gamepad1.left_stick_y;
         double rx = gamepad1.right_stick_x;
 
-        double frontLeftPower = -y + x + rx;
-        double frontRightPower = y + x + rx;
-        double backLeftPower = -y - x + rx;
-        double backRightPower = y - x + rx;
+        double frontLeftPower = (y + x + rx);
+        double backLeftPower = (y - x + rx) ;
+        double frontRightPower = (y - x - rx);
+        double backRightPower = (y + x - rx);
 
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
@@ -60,10 +81,8 @@ public class teleOp extends OpMode {
         telemetry.addData("value of gamepad x", x);
         telemetry.addData("value of gamepad y", y);
         telemetry.addData("value of gamepad rx", rx);
-        telemetry.addData("fl power", frontLeft.getPower());
-        telemetry.addData("fr power", frontRight.getPower());
-        telemetry.addData("bl power", backLeft.getPower());
-        telemetry.addData("br power", backRight.getPower());
+        telemetry.addData("intake counter", intakeCounter);
+        telemetry.addData("shooter counter", shooterCounter);
         telemetry.addData("intake power", intake.getPower());
         telemetry.addData("shooter power", shooter.getPower());
         telemetry.addData("intake power val ", intakePower);

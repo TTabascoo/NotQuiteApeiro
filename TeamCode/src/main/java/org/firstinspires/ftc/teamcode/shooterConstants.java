@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
+
+import com.bylazar.configurables.annotations.Configurable;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.feedback.PIDCoefficients;
 
-@Config
+@Configurable
 public class shooterConstants {
 
     private static double p;

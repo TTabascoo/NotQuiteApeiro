@@ -22,7 +22,7 @@ public class tuningShooter extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         motorShooter.setPower(
-                controller.calculate(new KineticState(0, target)
+                controller.calculate(new KineticState(0, target, 0)
         ));
     }
 }
