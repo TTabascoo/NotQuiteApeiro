@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.shooterConstants.target;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.ftc.NextFTCOpMode;
 
+@Disabled
 @TeleOp
 public class tuningShooter extends NextFTCOpMode {
     private DcMotorEx motorShooter;
