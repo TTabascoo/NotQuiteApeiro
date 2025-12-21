@@ -37,6 +37,19 @@ public class teleOp extends NextFTCOpMode {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+
     }
 
     @Override
@@ -87,12 +100,11 @@ public class teleOp extends NextFTCOpMode {
         telemetry.addData("shooter power", shooter.getPower());
         telemetry.addData("intake power val ", intakePower);
         telemetry.addData("shooter power val", shooterPower);
+        telemetry.addData("encoder FR", frontRight.getCurrentPosition());
+        telemetry.addData("encoder FL", frontLeft.getCurrentPosition());
+        telemetry.addData("encoder BR", backRight.getCurrentPosition());
+        telemetry.addData("encoder BL", backLeft.getCurrentPosition());
         telemetry.update();
-
-
-
-
-
 
     }
 }
