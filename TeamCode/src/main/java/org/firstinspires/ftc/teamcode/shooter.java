@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
+import static org.firstinspires.ftc.teamcode.shooterConstants.shooterdirection;
+import static dev.nextftc.bindings.Bindings.*;
 
-import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+import dev.nextftc.bindings.Button;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -11,19 +14,15 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class shooter implements Subsystem {
     public static final shooter INSTANCE = new shooter();
     private shooter () {}
-    private MotorEx shooter = new MotorEx("shooter");
-    private MotorEx shooter2 = new MotorEx("shooter2");
-    public Command shoot(double seconds) {
-        Timer CommandTimer = new Timer();
+    private final MotorEx shooter = new MotorEx("shooter");
+    private final MotorEx shooter2 = new MotorEx("shooter2");
+
+    public Command shoot(double power) {
         return new LambdaCommand()
                 .setStart(() -> {
-                    CommandTimer.resetTimer();
+                    new SetPower(shooter, power);
+                    new SetPower(shooter2, power);
                 })
-                .setUpdate(() -> {
-                    new SetPower(shooter, 1);
-                    new SetPower(shooter2, 1);
-                })
-                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > seconds)
                 .requires(this);
     }
 
@@ -37,10 +36,22 @@ public class shooter implements Subsystem {
                 .requires(this);
     }
 
-    public double power1() {
+    public double getPower1() {
         return shooter.getPower();
     }
-    public double power2() {
-        return shooter2.getPower();
+    public double getPower2() { return shooter2.getPower();}
+
+    public void switchDirections() {
+        shooterdirection = shooterdirection*-1;
     }
+
+    public void buttonMap(Gamepad gamepad) {
+        Button toggleShooter = button(() -> gamepad.b)
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(() -> shoot(1))
+                .whenBecomesFalse(() -> stop());
+        Button intakeSwitch = button(() -> gamepad.dpadUpWasPressed())
+                .whenBecomesTrue(() -> switchDirections());
+    }
+
 }

@@ -1,7 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.pedropathing.util.Timer;
+import static org.firstinspires.ftc.teamcode.intakeConstants.intakePower;
+import static org.firstinspires.ftc.teamcode.intakeConstants.intakedirection;
 
+import static dev.nextftc.bindings.Bindings.*;
+import static dev.nextftc.bindings.Bindings.variable;
+
+import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import dev.nextftc.bindings.Button;
+import dev.nextftc.bindings.Variable;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -20,19 +29,18 @@ public class intake implements Subsystem {
         return intake.getPower();
     }
 
-    public Command upRamp(double seconds) {
-        Timer CommandTimer = new Timer();
+    public Command autoRamp(double power) {
         return new LambdaCommand()
                 .setStart(() -> {
-                    CommandTimer.resetTimer();
+                    new SetPower(intake, power);
+
                 })
-                .setUpdate(() -> {
-                    new SetPower(intake, 1);
-                })
-                .setIsDone(() -> CommandTimer.getElapsedTimeSeconds() > seconds)
                 .requires(this);
     }
 
+    public void switchDirections() {
+        intakedirection = intakedirection*-1;
+    }
 
     public Command stop() {
         return new LambdaCommand()
@@ -41,4 +49,14 @@ public class intake implements Subsystem {
                 })
                 .requires(this);
     }
+    public void buttonMap(Gamepad gamepad) {
+        Variable<Float> itrigger = variable(() -> gamepad.right_trigger);
+        Button intakeButton = itrigger.asButton(value -> value>0);
+        intakeButton.whenTrue(autoRamp(gamepad.right_trigger));
+
+        Button intakeSwitch = button(() -> gamepad.dpadDownWasPressed())
+                .whenBecomesTrue(() -> switchDirections());
+
+    }
+
 }
