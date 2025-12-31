@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode;
+import static org.firstinspires.ftc.teamcode.shooterConstants.kA;
+import static org.firstinspires.ftc.teamcode.shooterConstants.kS;
+import static org.firstinspires.ftc.teamcode.shooterConstants.kV;
 import static org.firstinspires.ftc.teamcode.shooterConstants.target;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -8,7 +11,6 @@ import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@Disabled
 @TeleOp
 public class tuningShooter extends NextFTCOpMode {
     private DcMotorEx motorShooter;
@@ -19,6 +21,7 @@ public class tuningShooter extends NextFTCOpMode {
         motorShooter = hardwareMap.get(DcMotorEx.class, "shooter");
         controller = ControlSystem.builder()
                 .velPid(shooterConstants.coefficients)
+                .basicFF(kV, kA, kS)
                 .build();
         controller.setGoal(new KineticState(0, target, 0));
     }

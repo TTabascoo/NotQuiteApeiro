@@ -10,9 +10,12 @@ import dev.nextftc.control.feedback.PIDCoefficients;
 public class shooterConstants {
 
     private static double p;
-    private static double i;
-    private static double d;
+    private static final double i = 0;
+    private static final double d = 0;
     public static PIDCoefficients coefficients = new PIDCoefficients(p, i, d);
     public static double target;
-
+    public static double shooterdirection = 1;
+    public static double kV;    //TO DO Tune kV, kS, P
+    public static double kA = 0;
+    public static double kS;
 }
