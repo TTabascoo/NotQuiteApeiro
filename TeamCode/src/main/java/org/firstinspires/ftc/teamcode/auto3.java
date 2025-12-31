@@ -11,12 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import kotlin.coroutines.jvm.internal.SuspendFunction;
 
 @Autonomous(name = "Auton 9 RED")
 public class auto3 extends NextFTCOpMode {
@@ -25,9 +27,11 @@ public class auto3 extends NextFTCOpMode {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(shooter.INSTANCE),
-                new SubsystemComponent(intake.INSTANCE)
+                new SubsystemComponent(intake.INSTANCE),
+                new SubsystemComponent(locker.INSTANCE)
         );
     }
+
     @Override
     public void onInit() {
         buildPaths();
@@ -42,8 +46,8 @@ public class auto3 extends NextFTCOpMode {
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
-        telemetry.addData("shooter val: ", shooter.INSTANCE.power1());
-        telemetry.addData("shooter val2: ", shooter.INSTANCE.power2());
+        telemetry.addData("shooter val: ", shooter.INSTANCE.getPower1());
+        telemetry.addData("shooter val2: ", shooter.INSTANCE.getPower2());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
         telemetry.addData("path", follower().getCurrentPath());
         telemetry.addData("does it work pease", follower().isBusy());
@@ -54,21 +58,26 @@ public class auto3 extends NextFTCOpMode {
         fullAuto().schedule();
     }
 
-    public Command shoot1(double seconds) {
-        return new SequentialGroup(
-                shooter.INSTANCE.shoot(seconds).and(intake.INSTANCE.upRamp(seconds))
-        );
-    }
+
+
     public Command stopRamp() {
         return new SequentialGroup(
                 shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
         );
     }
-    public Command pickUp(double seconds) {
-        return new SequentialGroup(
-                intake.INSTANCE.upRamp(seconds)
+
+    public Command fullshoot(double delay, double delay2, double shootingTime) {
+        return new SequentialGroup(shooter.INSTANCE.shoot(1), //start running the shooter first to accelarate
+                new Delay(delay), //small delay before running intake
+                intake.INSTANCE.autoRamp(1), //start running the ramp up
+                new Delay(delay2),
+                locker.INSTANCE.open(),
+                new Delay(shootingTime),// delay to shoot
+                locker.INSTANCE.close()
         );
     }
+
+    //commands to make cleaner, can replace idm
     public Command pause() {
         return new InstantCommand(() -> follower().pausePathFollowing());
     }
@@ -98,21 +107,24 @@ public class auto3 extends NextFTCOpMode {
     public Command score3Path() {
         return new FollowPath(score3);
     }
+
     public Command fullAuto() {
         return new SequentialGroup(
-                score1Path(),
-                pause(),
-                shoot1(5),
-                stopRamp(),
-                resume(),
-                pickUpPathSetUp1(),
-                pickUpPath().and(pickUp(1)),
-                score2Path(),
-                shoot1(5),
-                pickUpPathSetUp2(),
-                pickUp2().and(pickUp(1)),
-                score3Path(),
-                shoot1(5)
+                score1Path(), //follow the path to score1
+                pause(), //pause the pathfollowing, might be able to remove this
+                fullshoot(0.5, 0.2, 3),
+                stopRamp(), //stop both the intake and shooter
+                resume(), //resume the pathfollowing
+                pickUpPathSetUp1(), //follow this path
+                pickUpPath().and(intake.INSTANCE.autoRamp(1)),//follow the path and turn the ramp up
+                intake.INSTANCE.stop(), //stop intake after it finishes the path before
+                score2Path(), //follow the score2 path
+                fullshoot(0.5, 0.2, 3), //shoot again
+                pickUpPathSetUp2(), // go towards balls
+                pickUp2().and(intake.INSTANCE.autoRamp(1)), // again follow path and turn on intake
+                intake.INSTANCE.stop(), // stop the thing
+                score3Path(), //go to score spot again
+                fullshoot(0.5 ,0.2, 3) //score again
         );
     }
     public PathChain score1;
