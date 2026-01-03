@@ -66,11 +66,11 @@ public class auto3 extends NextFTCOpMode {
         );
     }
 
-    public Command fullshoot(double delay, double delay2, double shootingTime) {
+    public Command fullshoot(double accelarationDelay, double lockerDelay, double shootingTime) {
         return new SequentialGroup(shooter.INSTANCE.shoot(1), //start running the shooter first to accelarate
-                new Delay(delay), //small delay before running intake
+                new Delay(accelarationDelay), //small delay before running intake
                 intake.INSTANCE.autoRamp(1), //start running the ramp up
-                new Delay(delay2),
+                new Delay(lockerDelay),
                 locker.INSTANCE.open(),
                 new Delay(shootingTime),// delay to shoot
                 locker.INSTANCE.close()
