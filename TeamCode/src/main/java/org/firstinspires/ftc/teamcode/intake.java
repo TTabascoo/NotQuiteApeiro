@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.teamcode;
-
-import static org.firstinspires.ftc.teamcode.intakeConstants.intakePower;
 import static org.firstinspires.ftc.teamcode.intakeConstants.intakedirection;
-
 import static dev.nextftc.bindings.Bindings.*;
 import static dev.nextftc.bindings.Bindings.variable;
-
-import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Variable;
 import dev.nextftc.core.commands.Command;
@@ -23,7 +17,7 @@ public class intake implements Subsystem {
     private intake() {
     }
 
-    private MotorEx intake = new MotorEx("intake");
+    private final MotorEx intake = new MotorEx("intake");
 
     public double power() {
         return intake.getPower();

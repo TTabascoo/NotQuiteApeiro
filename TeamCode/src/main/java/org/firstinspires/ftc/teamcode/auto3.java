@@ -19,7 +19,6 @@ import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
-import kotlin.coroutines.jvm.internal.SuspendFunction;
 
 @Autonomous(name = "Auton 9 RED")
 public class auto3 extends NextFTCOpMode {
@@ -51,7 +50,7 @@ public class auto3 extends NextFTCOpMode {
         telemetry.addData("shooter val2: ", shooter.INSTANCE.getPower2());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
         telemetry.addData("path", follower().getCurrentPath());
-        telemetry.addData("does it work pease", follower().isBusy());
+        telemetry.addData("does it work please", follower().isBusy());
         telemetry.update();
     }
     @Override
@@ -67,10 +66,10 @@ public class auto3 extends NextFTCOpMode {
         );
     }
 
-    public Command fullshoot(double accelarationDelay, double lockerDelay, double shootingTime) {
+    public Command fullshoot(double acceleration, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
-                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelarate
-                new Delay(accelarationDelay), //small delay before running intake
+                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelerate
+                new Delay(acceleration), //small delay before running intake
                 intake.INSTANCE.autoRamp(1), //start running the ramp up
                 new Delay(lockerDelay),
                 locker.INSTANCE.open(),
@@ -113,10 +112,10 @@ public class auto3 extends NextFTCOpMode {
     public Command fullAuto() {
         return new SequentialGroup(
                 score1Path(), //follow the path to score1
-                pause(), //pause the pathfollowing, might be able to remove this
+                pause(), //pause the path following, might be able to remove this
                 fullshoot(0.5, 0.2, 3),
                 stopRamp(), //stop both the intake and shooter
-                resume(), //resume the pathfollowing
+                resume(), //resume the path following
                 pickUpPathSetUp1(), //follow this path
                 pickUpPath().and(intake.INSTANCE.autoRamp(1)),//follow the path and turn the ramp up
                 intake.INSTANCE.stop(), //stop intake after it finishes the path before

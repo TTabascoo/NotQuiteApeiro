@@ -10,9 +10,6 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
-import java.time.Duration;
-
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -51,7 +48,7 @@ public class auto2 extends NextFTCOpMode {
         telemetry.addData("shooter val2: ", shooter.INSTANCE.getPower2());
         telemetry.addData("intake val: ", intake.INSTANCE.power());
         telemetry.addData("path", follower().getCurrentPath());
-        telemetry.addData("does it work pease", follower().isBusy());
+        telemetry.addData("does it work please", follower().isBusy());
         telemetry.update();
     }
     @Override
@@ -69,7 +66,7 @@ public class auto2 extends NextFTCOpMode {
 
     public Command fullshoot(double accelerationDelay, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
-                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelarate
+                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelerate
                 new Delay(accelerationDelay), //small delay before running intake
                 intake.INSTANCE.autoRamp(1), //start running the ramp up
                 new Delay(lockerDelay),
