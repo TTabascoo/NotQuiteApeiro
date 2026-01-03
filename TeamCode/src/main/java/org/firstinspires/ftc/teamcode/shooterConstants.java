@@ -18,4 +18,9 @@ public class shooterConstants {
     public static double kV;    //TO DO Tune kV, kS, P
     public static double kA = 0;
     public static double kS;
+    public static double actualVelocity;
+    public static ControlSystem controller;
+    public static double powerNeeded1;
+    public static double powerNeeded2;
+    public static double shootingSpotVel;
 }
