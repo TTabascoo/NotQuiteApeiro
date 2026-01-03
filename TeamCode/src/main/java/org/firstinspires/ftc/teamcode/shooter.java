@@ -1,44 +1,45 @@
 package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.shooterConstants.*;
 import static dev.nextftc.bindings.Bindings.*;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import dev.nextftc.bindings.Button;
 import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.controllable.MotorGroup;
+import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 public class shooter implements Subsystem {
     public static final shooter INSTANCE = new shooter();
     private shooter () {}
     private final MotorEx shooter = new MotorEx("shooter");
     private final MotorEx shooter2 = new MotorEx("shooter2");
+    public MotorGroup shooterGroup = new MotorGroup(shooter, shooter2);
 
     @Override
     public void initialize() {
+        shooter.zeroed();
+        shooter2.zeroed();
         controller = ControlSystem.builder()
                 .velPid(shooterConstants.coefficients)
                 .basicFF(kV, kA, kS)
                 .build();
-        controller.setGoal(new KineticState(0, shootingSpotVel));
     }
 
+
+    // LOOK AT NEXT FTC DOCS: PERIODIC RUNS EVERY LOOP AS LONG AS U INCORPORATE SUBSYSTEM
+    // The commands shot and stop simply create new goals for the motors, which will be run every loop
     @Override
     public void periodic() {
-        powerNeeded1 = controller.calculate(new KineticState(shooter.getCurrentPosition(), shooter.getVelocity()));
-        powerNeeded2 = controller.calculate(new KineticState(shooter2.getCurrentPosition(), shooter2.getVelocity()));
+        shooterGroup.setPower(controller.calculate(shooterGroup.getState()));
     }
 
-    public Command shoot(double power) {
+    public Command shoot(double direction) {
         return new LambdaCommand()
                 .setStart(() -> {
-                    new SetPower(shooter, powerNeeded1);
-                    new SetPower(shooter2, powerNeeded2);
+                    new RunToVelocity(controller, shootingSpotVel*direction);
                 })
                 .requires(this);
     }
@@ -48,8 +49,7 @@ public class shooter implements Subsystem {
     public Command stop() {
         return new LambdaCommand()
                 .setStart(() -> {
-                    new SetPower(shooter, 0);
-                    new SetPower(shooter2, 0);
+                    new RunToVelocity(controller, 0);
                 })
                 .requires(this);
     }
@@ -66,7 +66,7 @@ public class shooter implements Subsystem {
     public void buttonMap(Gamepad gamepad) {
         Button toggleShooter = button(() -> gamepad.b)
                 .toggleOnBecomesTrue()
-                .whenBecomesTrue(() -> shoot(1*shooterdirection)) //TO DO CHANGE W PID
+                .whenBecomesTrue(() -> shoot(shooterdirection))
                 .whenBecomesFalse(() -> stop());
         Button directionSwitch = button(() -> gamepad.dpadUpWasPressed())
                 .whenBecomesTrue(() -> switchDirections());

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.headingStart;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.pickUpAngle;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.scoreAngle;
+import static org.firstinspires.ftc.teamcode.shooterConstants.shooterdirection;
 import static java.lang.Math.toDegrees;
 
 import com.pedropathing.geometry.BezierLine;
@@ -67,7 +68,8 @@ public class auto3 extends NextFTCOpMode {
     }
 
     public Command fullshoot(double accelarationDelay, double lockerDelay, double shootingTime) {
-        return new SequentialGroup(shooter.INSTANCE.shoot(1), //start running the shooter first to accelarate
+        return new SequentialGroup(
+                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelarate
                 new Delay(accelarationDelay), //small delay before running intake
                 intake.INSTANCE.autoRamp(1), //start running the ramp up
                 new Delay(lockerDelay),

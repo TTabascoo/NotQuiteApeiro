@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.headingStart;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.pickUpAngle;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.scoreAngle;
+import static org.firstinspires.ftc.teamcode.shooterConstants.shooterdirection;
+
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -35,7 +37,7 @@ public class auto2 extends NextFTCOpMode {
     public void onInit() {
         buildPaths();
         follower().setStartingPose(startPose);
-        shooter.INSTANCE.stop().schedule();
+        shooter.INSTANCE.stop().schedule(); //SCHEDULE STOPS TO MAKE SURE IT STOPS RUNNING EVERY INIT
         intake.INSTANCE.stop().schedule();
     }
 
@@ -58,7 +60,7 @@ public class auto2 extends NextFTCOpMode {
     }
 
 
-
+    //COMMANDS THAT COMBINE BOTH INTAKE AND SHOOTER
     public Command stopRamp() {
         return new SequentialGroup(
                 shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
@@ -67,7 +69,7 @@ public class auto2 extends NextFTCOpMode {
 
     public Command fullshoot(double accelerationDelay, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
-                shooter.INSTANCE.shoot(1), //start running the shooter first to accelarate
+                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelarate
                 new Delay(accelerationDelay), //small delay before running intake
                 intake.INSTANCE.autoRamp(1), //start running the ramp up
                 new Delay(lockerDelay),
@@ -76,12 +78,16 @@ public class auto2 extends NextFTCOpMode {
                 locker.INSTANCE.close()
         );
     }
+
+    //PRETTY SURE THESE ARE UNNECESSARY
     public Command pause() {
         return new InstantCommand(() -> follower().pausePathFollowing());
     }
     public Command resume() {
         return new InstantCommand(() -> follower().resumePathFollowing());
     }
+
+    //FOLLOW PATHS
     public Command score1Path() {
         return new FollowPath(score1);
     }
@@ -105,13 +111,13 @@ public class auto2 extends NextFTCOpMode {
     public Command score3Path() {
         return new FollowPath(score3);
     }
+
+    //FULL AUTO COMMAND:
     public Command fullAuto() {
         return new SequentialGroup(
                 score1Path(),
-                pause(),
                 fullshoot(0.3, 0.2,5),
                 stopRamp(),
-                resume(),
                 pickUpPathSetUp1(),
                 pickUpPath().and(intake.INSTANCE.autoRamp(1)),
                 intake.INSTANCE.stop(),
@@ -123,6 +129,8 @@ public class auto2 extends NextFTCOpMode {
                 fullshoot(0.3, 0.2, 5))
                 ;
     }
+
+    //PATH STUFF
     public PathChain score1;
     public PathChain pickUpPath1;
     public PathChain pickUp;
