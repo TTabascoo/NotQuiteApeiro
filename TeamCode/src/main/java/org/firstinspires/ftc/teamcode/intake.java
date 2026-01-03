@@ -52,7 +52,7 @@ public class intake implements Subsystem {
     public void buttonMap(Gamepad gamepad) {
         Variable<Float> itrigger = variable(() -> gamepad.right_trigger);
         Button intakeButton = itrigger.asButton(value -> value>0);
-        intakeButton.whenTrue(autoRamp(gamepad.right_trigger));
+        intakeButton.whenTrue(autoRamp(gamepad.right_trigger*intakedirection));
 
         Button intakeSwitch = button(() -> gamepad.dpadDownWasPressed())
                 .whenBecomesTrue(() -> switchDirections());
