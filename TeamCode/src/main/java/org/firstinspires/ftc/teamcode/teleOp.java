@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.intakeConstants.intakePower;
 
 import static dev.nextftc.bindings.Bindings.button;
 import static dev.nextftc.bindings.Bindings.variable;
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -22,6 +23,8 @@ import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Variable;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
+import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import org.firstinspires.ftc.teamcode.intake;
 
@@ -29,21 +32,13 @@ import org.firstinspires.ftc.teamcode.intake;
 public class teleOp extends NextFTCOpMode {
     {
         addComponents(
-                new SubsystemComponent(
-                        intake.INSTANCE),
-                new SubsystemComponent(
-                        shooter.INSTANCE
-                ),
-                new SubsystemComponent(
-                    locker.INSTANCE
-                )
+                new PedroComponent(Constants::createFollower),
+                new SubsystemComponent(intake.INSTANCE),
+                new SubsystemComponent(shooter.INSTANCE),
+                new SubsystemComponent(locker.INSTANCE),
+                new SubsystemComponent(driveTrain.INSTANCE)
         );
     }
-    DcMotor frontRight;
-    DcMotor frontLeft;
-    DcMotor backLeft;
-    DcMotor backRight;
-    Follower follower;
     PathChain selfPath;
 
     @Override
@@ -51,69 +46,30 @@ public class teleOp extends NextFTCOpMode {
         shooter.INSTANCE.buttonMap(gamepad1);
         intake.INSTANCE.buttonMap(gamepad1);
         locker.INSTANCE.buttonMap(gamepad1);
+        driveTrain.INSTANCE.driveControl().schedule();
+
     }
 
     @Override
     public void onInit() {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        follower = Constants.createFollower(hardwareMap);
-
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
     @Override
     public void onUpdate() {
-        follower.update();
+        follower().update();
         BindingManager.update();
 
         if (gamepad1.shareWasPressed()) {
-            selfPath = follower.pathBuilder().addPath(new BezierLine(follower.getPose(), follower.getPose())).build();
+            selfPath = follower().pathBuilder().addPath(new BezierLine(follower().getPose(), follower().getPose())).build();
             new FollowPath(selfPath, true, 1.0);
-        }
+        } //if this doesnt work uh oh
 
-
-
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
-
-        double frontLeftPower = (y + x + rx);
-        double backLeftPower = (y - x + rx) ;
-        double frontRightPower = (y - x - rx);
-        double backRightPower = (y + x - rx);
-
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
-
-        telemetry.addData("value of gamepad x", x);
-        telemetry.addData("value of gamepad y", y);
-        telemetry.addData("value of gamepad rx", rx);
+        telemetry.addData("left stick y", Gamepads.gamepad1().leftStickY().negate());
+        telemetry.addData("left stick x", Gamepads.gamepad1().leftStickX());
+        telemetry.addData("right stick x", Gamepads.gamepad1().rightStickX());
         telemetry.addData("intake power", intake.INSTANCE.power());
         telemetry.addData("shooter power", shooter.INSTANCE.getPower1());
         telemetry.addData("shooter power", shooter.INSTANCE.getPower2());
-        telemetry.addData("intake power val ", intakePower);
-        telemetry.addData("encoder FR", frontRight.getCurrentPosition());
-        telemetry.addData("encoder FL", frontLeft.getCurrentPosition());
-        telemetry.addData("encoder BR", backRight.getCurrentPosition());
-        telemetry.addData("encoder BL", backLeft.getCurrentPosition());
         telemetry.update();
 
     }
