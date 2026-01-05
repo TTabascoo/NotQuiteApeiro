@@ -10,6 +10,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
 
 public class shooter implements Subsystem {
     public static final shooter INSTANCE = new shooter();
@@ -44,6 +45,20 @@ public class shooter implements Subsystem {
                 .requires(this);
     }
 
+    //NON PIDF shooter commands for testing
+    public Command testShoot() {
+        return new LambdaCommand()
+                .setStart(() -> {
+                    new SetPower(shooterGroup, 1);
+                }).requires(this);
+    }
+    public Command testStop() {
+        return new LambdaCommand()
+                .setStart(() -> {
+                    new SetPower(shooterGroup, 0);
+                }).requires(this);
+    }
+
 
 
     public Command stop() {
@@ -63,11 +78,26 @@ public class shooter implements Subsystem {
         shooterdirection = shooterdirection*-1;
     }
 
+    public double getDirection() {
+        return shooterdirection;
+    }
+
+    public double getGoal() {
+        return controller.calculate(shooterGroup.getState());
+    }
     public void buttonMap(Gamepad gamepad) {
         Button toggleShooter = button(() -> gamepad.b)
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> shoot(shooterdirection))
                 .whenBecomesFalse(() -> stop());
+        Button directionSwitch = button(() -> gamepad.dpadUpWasPressed())
+                .whenBecomesTrue(() -> switchDirections());
+    }
+    public void testButtonMap(Gamepad gamepad) {
+        Button toggleShooter = button(() -> gamepad.b)
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(() -> testShoot())
+                .whenBecomesFalse(() -> testStop());
         Button directionSwitch = button(() -> gamepad.dpadUpWasPressed())
                 .whenBecomesTrue(() -> switchDirections());
     }

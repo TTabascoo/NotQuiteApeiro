@@ -35,6 +35,9 @@ public class intake implements Subsystem {
     public void switchDirections() {
         intakedirection = intakedirection*-1;
     }
+    public double getDirection() {
+        return intakedirection;
+    }
 
     public Command stop() {
         return new LambdaCommand()

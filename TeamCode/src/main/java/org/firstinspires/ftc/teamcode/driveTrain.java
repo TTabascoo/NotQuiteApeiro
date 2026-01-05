@@ -18,6 +18,18 @@ public class driveTrain implements Subsystem {
     public void initialize() {
 
     }
+    public double getFLPower() {
+        return frontLeft.getPower();
+    }
+    public double getFRPower() {
+        return frontRight.getPower();
+    }
+    public double getBLPower() {
+        return backLeft.getPower();
+    }
+    public double getBRPower() {
+        return backRight.getPower();
+    }
     //pov u read the documentation: i love built in commands wowie 67
     public Command driveControl() {
         return new MecanumDriverControlled(

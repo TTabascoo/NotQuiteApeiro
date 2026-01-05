@@ -8,6 +8,7 @@ import dev.nextftc.bindings.Button;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
@@ -26,6 +27,9 @@ public class locker implements Subsystem {
                 .setStart(() -> {
                     new SetPosition(locker, 0);
                 }).setRequirements(this);
+    }
+    public double getPosition() {
+        return locker.getPosition();
     }
     public void buttonMap(Gamepad gamepad) {
         Button open = button(() -> gamepad.square)

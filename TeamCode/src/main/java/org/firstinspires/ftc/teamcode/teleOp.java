@@ -26,11 +26,11 @@ public class teleOp extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        shooter.INSTANCE.buttonMap(gamepad1);
+//        shooter.INSTANCE.buttonMap(gamepad1);
+        shooter.INSTANCE.testButtonMap(gamepad1);
         intake.INSTANCE.buttonMap(gamepad1);
         locker.INSTANCE.buttonMap(gamepad1);
         driveTrain.INSTANCE.driveControl().schedule();
-
     }
 
     @Override
@@ -42,17 +42,25 @@ public class teleOp extends NextFTCOpMode {
         follower().update();
         BindingManager.update();
 
-        if (gamepad1.shareWasPressed()) {
-            selfPath = follower().pathBuilder().addPath(new BezierPoint(follower().getPose().getX(), follower().getPose().getY())).build();
-            new FollowPath(selfPath, true, 1.0);
-        } //if this doesn't work uh oh
+//        if (gamepad1.shareWasPressed()) {
+//            selfPath = follower().pathBuilder().addPath(new BezierPoint(follower().getPose().getX(), follower().getPose().getY())).build();
+//            new FollowPath(selfPath, true, 1.0);
+//        } //if this doesn't work uh oh
 
         telemetry.addData("left stick y", Gamepads.gamepad1().leftStickY().negate());
         telemetry.addData("left stick x", Gamepads.gamepad1().leftStickX());
         telemetry.addData("right stick x", Gamepads.gamepad1().rightStickX());
+        telemetry.addData("fr power", driveTrain.INSTANCE.getFRPower());
+        telemetry.addData("fl power", driveTrain.INSTANCE.getFLPower());
+        telemetry.addData("br power", driveTrain.INSTANCE.getBRPower());
+        telemetry.addData("bl power", driveTrain.INSTANCE.getBLPower());
         telemetry.addData("intake power", intake.INSTANCE.power());
-        telemetry.addData("shooter power", shooter.INSTANCE.getPower1());
-        telemetry.addData("shooter power", shooter.INSTANCE.getPower2());
+        telemetry.addData("intake direction", intake.INSTANCE.getDirection());
+        telemetry.addData("shooter power 1", shooter.INSTANCE.getPower1());
+        telemetry.addData("shooter power 2", shooter.INSTANCE.getPower2());
+        telemetry.addData("shooter direction", shooter.INSTANCE.getDirection());
+        telemetry.addData("shooter goal", shooter.INSTANCE.getGoal());
+        telemetry.addData("locker position", locker.INSTANCE.getPosition());
         telemetry.update();
 
     }
