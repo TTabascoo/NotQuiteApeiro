@@ -37,7 +37,7 @@ public class auto3 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         shooter.INSTANCE.stop().schedule();
-        intake.INSTANCE.stop().schedule();
+        intake.INSTANCE.rampOff().schedule();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class auto3 extends NextFTCOpMode {
 
     public Command stopRamp() {
         return new SequentialGroup(
-                shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
+                shooter.INSTANCE.stop().and(intake.INSTANCE.rampOff())
         );
     }
 
@@ -70,7 +70,7 @@ public class auto3 extends NextFTCOpMode {
         return new SequentialGroup(
                 shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelerate
                 new Delay(acceleration), //small delay before running intake
-                intake.INSTANCE.autoRamp(1), //start running the ramp up
+                intake.INSTANCE.rampOn(1), //start running the ramp up
                 new Delay(lockerDelay),
                 locker.INSTANCE.open(),
                 new Delay(shootingTime),// delay to shoot
@@ -117,13 +117,13 @@ public class auto3 extends NextFTCOpMode {
                 stopRamp(), //stop both the intake and shooter
                 resume(), //resume the path following
                 pickUpPathSetUp1(), //follow this path
-                pickUpPath().and(intake.INSTANCE.autoRamp(1)),//follow the path and turn the ramp up
-                intake.INSTANCE.stop(), //stop intake after it finishes the path before
+                pickUpPath().and(intake.INSTANCE.rampOn(1)),//follow the path and turn the ramp up
+                intake.INSTANCE.rampOff(), //stop intake after it finishes the path before
                 score2Path(), //follow the score2 path
                 fullshoot(0.5, 0.2, 3), //shoot again
                 pickUpPathSetUp2(), // go towards balls
-                pickUp2().and(intake.INSTANCE.autoRamp(1)), // again follow path and turn on intake
-                intake.INSTANCE.stop(), // stop the thing
+                pickUp2().and(intake.INSTANCE.rampOn(1)), // again follow path and turn on intake
+                intake.INSTANCE.rampOff(), // stop the thing
                 score3Path(), //go to score spot again
                 fullshoot(0.5 ,0.2, 3) //score again
         );

@@ -21,4 +21,5 @@ public class shooterConstants {
     public static double actualVelocity;
     public static ControlSystem controller;
     public static double shootingSpotVel;
+    public static double threshold = 15;
 }

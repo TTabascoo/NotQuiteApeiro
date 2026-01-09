@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -14,10 +15,7 @@ public class driveTrain implements Subsystem {
     private final MotorEx backLeft = new MotorEx( "backLeft").reversed().brakeMode();
     private final MotorEx backRight = new MotorEx("backRight").reversed().brakeMode();
 
-    @Override
-    public void initialize() {
 
-    }
     public double getFLPower() {
         return frontLeft.getPower();
     }

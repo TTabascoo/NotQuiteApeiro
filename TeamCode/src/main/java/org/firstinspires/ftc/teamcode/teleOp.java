@@ -1,25 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import dev.nextftc.bindings.BindingManager;
+import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.components.BulkReadComponent;
 
-@TeleOp
+@TeleOp(name = "Full Teleop, Click Here!")
 public class teleOp extends NextFTCOpMode {
     {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(intake.INSTANCE),
-                new SubsystemComponent(shooter.INSTANCE),
                 new SubsystemComponent(locker.INSTANCE),
-                new SubsystemComponent(driveTrain.INSTANCE)
+                new SubsystemComponent(driveTrain.INSTANCE),
+                BulkReadComponent.INSTANCE,
+                BindingsComponent.INSTANCE
         );
     }
     PathChain selfPath;
@@ -27,11 +28,12 @@ public class teleOp extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
 //        shooter.INSTANCE.buttonMap(gamepad1);
-        shooter.INSTANCE.testButtonMap(gamepad1);
-        intake.INSTANCE.buttonMap(gamepad1);
-        locker.INSTANCE.buttonMap(gamepad1);
-        driveTrain.INSTANCE.driveControl().schedule();
+        shooter.INSTANCE.buttonMap();
+        intake.INSTANCE.buttonMap();
+//        locker.INSTANCE.buttonMap();
+
     }
+
 
     @Override
     public void onInit() {
@@ -39,7 +41,6 @@ public class teleOp extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        follower().update();
         BindingManager.update();
 
 //        if (gamepad1.shareWasPressed()) {
@@ -59,9 +60,13 @@ public class teleOp extends NextFTCOpMode {
         telemetry.addData("shooter power 1", shooter.INSTANCE.getPower1());
         telemetry.addData("shooter power 2", shooter.INSTANCE.getPower2());
         telemetry.addData("shooter direction", shooter.INSTANCE.getDirection());
-        telemetry.addData("shooter goal", shooter.INSTANCE.getGoal());
+//        telemetry.addData("shooter goal", shooter.INSTANCE.getGoal());
         telemetry.addData("locker position", locker.INSTANCE.getPosition());
         telemetry.update();
 
+    }
+    @Override
+    public void onStop() {
+        BindingManager.reset();
     }
 }

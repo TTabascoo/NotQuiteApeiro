@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.intakeConstants.intakedirection;
-import static dev.nextftc.bindings.Bindings.*;
-import static dev.nextftc.bindings.Bindings.variable;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import dev.nextftc.bindings.Button;
-import dev.nextftc.bindings.Variable;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 
@@ -23,14 +21,23 @@ public class intake implements Subsystem {
         return intake.getPower();
     }
 
-    public Command autoRamp(double power) {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new SetPower(intake, power);
+//    public LambdaCommand autoRamp(double power) {
+//        return new LambdaCommand()
+//                .setStart(() -> {
+//                    new SetPower(intake, power);
+//                })
+////                .setInterruptible(true)
+//                .requires(this);
+//    }
 
-                })
-                .requires(this);
+    public Command rampOn(double power) {
+        return new InstantCommand( new SetPower(intake, power)).requires(this);
     }
+    public Command rampOff() {
+        return new InstantCommand(new SetPower(intake, 0)).requires(this);
+    }
+
+
 
     public void switchDirections() {
         intakedirection = intakedirection*-1;
@@ -39,21 +46,26 @@ public class intake implements Subsystem {
         return intakedirection;
     }
 
-    public Command stop() {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new SetPower(intake, 0);
-                })
-                .requires(this);
-    }
-    public void buttonMap(Gamepad gamepad) {
-        Variable<Float> itrigger = variable(() -> gamepad.right_trigger);
-        Button intakeButton = itrigger.asButton(value -> value>0);
-        intakeButton.whenTrue(autoRamp(gamepad.right_trigger*intakedirection));
+//    public LambdaCommand stop() {
+//        return new LambdaCommand()
+//                .setStart(() -> {
+//                    new SetPower(intake, 0);
+//                })
+//                .requires(this);
+//    }
+    public void buttonMap() {
+        Gamepads.gamepad1().rightTrigger()
+                .greaterThan(0.0)
+                .whenBecomesTrue(rampOn(1*intakedirection))
+                .whenBecomesFalse(rampOff());
 
-        Button intakeSwitch = button(() -> gamepad.dpadDownWasPressed())
-                .whenBecomesTrue(() -> switchDirections());
+        Gamepads.gamepad1().leftTrigger()
+                .greaterThan(0.0)
+                .whenBecomesTrue(rampOn(-1*intakedirection))
+                .whenBecomesFalse(rampOff());
 
+        Gamepads.gamepad1().dpadDown()
+                .whenBecomesTrue(this::switchDirections);
     }
 
 }

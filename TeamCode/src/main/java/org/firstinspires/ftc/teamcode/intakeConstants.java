@@ -5,6 +5,6 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class intakeConstants {
     public static double intakePower;
-    public static double intakedirection = 1;
+    public static double intakedirection = -1;
 
 }

@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import dev.nextftc.bindings.Button;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -34,10 +37,14 @@ public class shooter implements Subsystem {
     // The commands shot and stop simply create new goals for the motors, which will be run every loop
     @Override
     public void periodic() {
-        shooterGroup.setPower(controller.calculate(shooterGroup.getState()));
+//        shooterGroup.setPower(controller.calculate(shooterGroup.getState()));
+//        ActiveOpMode.telemetry().addData("shooter1 power", shooter.getPower());
+//        ActiveOpMode.telemetry().addData("shooter2 power", shooter2.getPower());
+//        ActiveOpMode.telemetry().addData("direction", shooterdirection);
+//        ActiveOpMode.telemetry().update();
     }
 
-    public Command shoot(double direction) {
+    public LambdaCommand shoot(double direction) {
         return new LambdaCommand()
                 .setStart(() -> {
                     new RunToVelocity(controller, shootingSpotVel*direction);
@@ -45,29 +52,25 @@ public class shooter implements Subsystem {
                 .requires(this);
     }
 
-    //NON PIDF shooter commands for testing
-    public Command testShoot() {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new SetPower(shooterGroup, 1);
-                }).requires(this);
-    }
-    public Command testStop() {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new SetPower(shooterGroup, 0);
-                }).requires(this);
-    }
 
 
-
-    public Command stop() {
+    public LambdaCommand stop() {
         return new LambdaCommand()
                 .setStart(() -> {
                     new RunToVelocity(controller, 0);
                 })
                 .requires(this);
     }
+    //NON PIDF shooter commands for testing
+
+
+    public Command testShoot() {
+        return new InstantCommand(new SetPower(shooterGroup, 1).requires(this));
+    }
+    public Command testStop() {
+        return new InstantCommand(new SetPower(shooterGroup, 0).requires(this));
+    }
+
 
     public double getPower1() {
         return shooter.getPower();
@@ -85,21 +88,16 @@ public class shooter implements Subsystem {
     public double getGoal() {
         return controller.calculate(shooterGroup.getState());
     }
-    public void buttonMap(Gamepad gamepad) {
-        Button toggleShooter = button(() -> gamepad.b)
+    public void buttonMap() {
+        Gamepads.gamepad1().b()
                 .toggleOnBecomesTrue()
-                .whenBecomesTrue(() -> shoot(shooterdirection))
-                .whenBecomesFalse(() -> stop());
-        Button directionSwitch = button(() -> gamepad.dpadUpWasPressed())
+                .whenBecomesTrue(testShoot())
+                .whenBecomesFalse(testStop());
+        Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> switchDirections());
     }
-    public void testButtonMap(Gamepad gamepad) {
-        Button toggleShooter = button(() -> gamepad.b)
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(() -> testShoot())
-                .whenBecomesFalse(() -> testStop());
-        Button directionSwitch = button(() -> gamepad.dpadUpWasPressed())
-                .whenBecomesTrue(() -> switchDirections());
+    public boolean reachedTarget() {
+        return Math.abs(shooter.getVelocity() - target) <= threshold;
     }
 
 }

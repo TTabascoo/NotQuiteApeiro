@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -19,7 +20,7 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@Autonomous(name = "Auton 9 (start at top, shoot in middle)")
+@Autonomous(name = "Auton 9 BLUE")
 public class auto2 extends NextFTCOpMode {
 
     public auto2() {
@@ -35,7 +36,7 @@ public class auto2 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         shooter.INSTANCE.stop().schedule(); //SCHEDULE STOPS TO MAKE SURE IT STOPS RUNNING EVERY INIT
-        intake.INSTANCE.stop().schedule();
+        intake.INSTANCE.rampOff().schedule();
     }
 
     @Override
@@ -60,15 +61,15 @@ public class auto2 extends NextFTCOpMode {
     //COMMANDS THAT COMBINE BOTH INTAKE AND SHOOTER
     public Command stopRamp() {
         return new SequentialGroup(
-                shooter.INSTANCE.stop().and(intake.INSTANCE.stop())
+                shooter.INSTANCE.stop().and(intake.INSTANCE.rampOff())
         );
     }
 
     public Command fullshoot(double accelerationDelay, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
                 shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelerate
-                new Delay(accelerationDelay), //small delay before running intake
-                intake.INSTANCE.autoRamp(1), //start running the ramp up
+                new WaitUntil(shooter.INSTANCE::reachedTarget), //small delay before running intake
+                intake.INSTANCE.rampOn(1), //start running the ramp up
                 new Delay(lockerDelay),
                 locker.INSTANCE.open(),
                 new Delay(shootingTime),// delay to shoot
@@ -116,12 +117,12 @@ public class auto2 extends NextFTCOpMode {
                 fullshoot(0.3, 0.2,5),
                 stopRamp(),
                 pickUpPathSetUp1(),
-                pickUpPath().and(intake.INSTANCE.autoRamp(1)),
-                intake.INSTANCE.stop(),
+                pickUpPath().and(intake.INSTANCE.rampOn(1)),
+                intake.INSTANCE.rampOff(),
                 score2Path(),
                 fullshoot(0.3, 0.2, 5),
                 pickUpPathSetUp2(),
-                pickUp2().and(intake.INSTANCE.autoRamp(1)),
+                pickUp2().and(intake.INSTANCE.rampOn(1)),
                 score3Path(),
                 fullshoot(0.3, 0.2, 5))
                 ;
