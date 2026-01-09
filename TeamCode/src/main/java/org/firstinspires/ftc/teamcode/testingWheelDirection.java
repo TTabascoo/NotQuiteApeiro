@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@Disabled
+
 @TeleOp
 public class testingWheelDirection extends NextFTCOpMode {
     DcMotor frontRight;
