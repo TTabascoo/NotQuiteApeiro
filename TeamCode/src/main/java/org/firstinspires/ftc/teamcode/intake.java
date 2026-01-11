@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.intakeConstants.intakedirection;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
@@ -46,26 +44,19 @@ public class intake implements Subsystem {
         return intakedirection;
     }
 
-//    public LambdaCommand stop() {
-//        return new LambdaCommand()
-//                .setStart(() -> {
-//                    new SetPower(intake, 0);
-//                })
-//                .requires(this);
-//    }
     public void buttonMap() {
         Gamepads.gamepad1().rightTrigger()
                 .greaterThan(0.0)
-                .whenBecomesTrue(rampOn(1*intakedirection))
+                .whenBecomesTrue(rampOn(-0.8))
                 .whenBecomesFalse(rampOff());
 
         Gamepads.gamepad1().leftTrigger()
-                .greaterThan(0.0)
-                .whenBecomesTrue(rampOn(-1*intakedirection))
+                .greaterThan(0.1)
+                .whenBecomesTrue(rampOn(0.8))
                 .whenBecomesFalse(rampOff());
 
         Gamepads.gamepad1().dpadDown()
-                .whenBecomesTrue(this::switchDirections);
+                .whenBecomesTrue(() -> switchDirections());
     }
 
 }
