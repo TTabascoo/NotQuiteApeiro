@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.shooterConstants.*;
-import static dev.nextftc.bindings.Bindings.*;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import dev.nextftc.bindings.Button;
 import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
@@ -20,6 +16,7 @@ public class shooter implements Subsystem {
     private shooter () {}
     private final MotorEx shooter = new MotorEx("shooter");
     private final MotorEx shooter2 = new MotorEx("shooter2");
+    private ControlSystem controller;
     public MotorGroup shooterGroup = new MotorGroup(shooter, shooter2);
 
     @Override
@@ -27,9 +24,10 @@ public class shooter implements Subsystem {
         shooter.zeroed();
         shooter2.zeroed();
         controller = ControlSystem.builder()
-                .velPid(shooterConstants.coefficients)
-                .basicFF(kV, kA, kS)
+                .velPid(coefficients)
+                .basicFF(ffcoefficients)
                 .build();
+        controller.setGoal(new KineticState(0, 0));
     }
 
 
@@ -37,45 +35,45 @@ public class shooter implements Subsystem {
     // The commands shot and stop simply create new goals for the motors, which will be run every loop
     @Override
     public void periodic() {
-//        shooterGroup.setPower(controller.calculate(shooterGroup.getState()));
-//        ActiveOpMode.telemetry().addData("shooter1 power", shooter.getPower());
-//        ActiveOpMode.telemetry().addData("shooter2 power", shooter2.getPower());
-//        ActiveOpMode.telemetry().addData("direction", shooterdirection);
-//        ActiveOpMode.telemetry().update();
+        double powerNeeded = controller.calculate(new KineticState(
+                shooter.getCurrentPosition() ,
+                shooter.getVelocity()
+        ));
+        shooter.setPower(powerNeeded);
+        shooter2.setPower(-powerNeeded);
     }
 
-    public LambdaCommand shoot(double direction) {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new RunToVelocity(controller, shootingSpotVel*direction);
-                })
-                .requires(this);
-    }
-
-
-
-    public LambdaCommand stop() {
-        return new LambdaCommand()
-                .setStart(() -> {
-                    new RunToVelocity(controller, 0);
-                })
-                .requires(this);
-    }
-    //NON PIDF shooter commands for testing
-
-
-    public Command testShoot() {
-        return new InstantCommand(new SetPower(shooterGroup, 1).requires(this));
+    //NON PID COMMANDS
+    public Command testShoot(double power) {
+        return new InstantCommand(new SetPower(shooterGroup, power));
     }
     public Command testStop() {
-        return new InstantCommand(new SetPower(shooterGroup, 0).requires(this));
+        return new InstantCommand(new SetPower(shooterGroup, 0));
+    }
+    public void shoot() {
+        controller.setGoal(new KineticState(0, target));
+    }
+    public void stop() {
+        controller.setGoal(new KineticState(0, 0));
     }
 
+    public Command shootCommand() {
+        return new RunToVelocity(controller, target, tolerance);
+    }
+    public Command stopCommand() {
+        return new RunToVelocity(controller, target, tolerance);
+    }
 
     public double getPower1() {
         return shooter.getPower();
     }
     public double getPower2() { return shooter2.getPower();}
+    public double getVelocity() {
+        return shooter.getVelocity();
+    }
+    public double getTarget() {
+        return controller.getGoal().getVelocity();
+    }
 
     public void switchDirections() {
         shooterdirection = shooterdirection*-1;
@@ -91,8 +89,9 @@ public class shooter implements Subsystem {
     public void buttonMap() {
         Gamepads.gamepad1().b()
                 .toggleOnBecomesTrue()
-                .whenBecomesTrue(testShoot())
-                .whenBecomesFalse(testStop());
+                .whenBecomesTrue(() -> shoot())
+                .whenBecomesFalse(() -> stop());
+
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> switchDirections());
     }
