@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
+import static com.bylazar.telemetry.PanelsTelemetry.INSTANCE;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -18,19 +21,23 @@ public class teleOp extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(locker.INSTANCE),
+                new SubsystemComponent(shooter.INSTANCE),
                 new SubsystemComponent(driveTrain.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
     }
     PathChain selfPath;
+    private TelemetryManager panelsTelemetry = INSTANCE.getTelemetry() ;
+
 
     @Override
     public void onStartButtonPressed() {
-//        shooter.INSTANCE.buttonMap(gamepad1);
+        BindingManager.reset();
         shooter.INSTANCE.buttonMap();
         intake.INSTANCE.buttonMap();
-//        locker.INSTANCE.buttonMap();
+        locker.INSTANCE.buttonMap();
+        driveTrain.INSTANCE.driveControl().schedule();
 
     }
 
@@ -63,6 +70,10 @@ public class teleOp extends NextFTCOpMode {
 //        telemetry.addData("shooter goal", shooter.INSTANCE.getGoal());
         telemetry.addData("locker position", locker.INSTANCE.getPosition());
         telemetry.update();
+        panelsTelemetry.addData("actual vel", shooter.INSTANCE.getVelocity());
+        panelsTelemetry.addData("target,", shooter.INSTANCE.getTarget());
+        panelsTelemetry.update();
+
 
     }
     @Override
