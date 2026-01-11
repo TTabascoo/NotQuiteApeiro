@@ -35,7 +35,7 @@ public class auto2 extends NextFTCOpMode {
     public void onInit() {
         buildPaths();
         follower().setStartingPose(startPose);
-        shooter.INSTANCE.stop().schedule(); //SCHEDULE STOPS TO MAKE SURE IT STOPS RUNNING EVERY INIT
+        shooter.INSTANCE.stop(); //SCHEDULE STOPS TO MAKE SURE IT STOPS RUNNING EVERY INIT
         intake.INSTANCE.rampOff().schedule();
     }
 
@@ -61,14 +61,13 @@ public class auto2 extends NextFTCOpMode {
     //COMMANDS THAT COMBINE BOTH INTAKE AND SHOOTER
     public Command stopRamp() {
         return new SequentialGroup(
-                shooter.INSTANCE.stop().and(intake.INSTANCE.rampOff())
+                shooter.INSTANCE.stopCommand().and(intake.INSTANCE.rampOff())
         );
     }
 
     public Command fullshoot(double accelerationDelay, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
-                shooter.INSTANCE.shoot(shooterdirection), //start running the shooter first to accelerate
-                new WaitUntil(shooter.INSTANCE::reachedTarget), //small delay before running intake
+                shooter.INSTANCE.shootCommand(), //start running the shooter first to accelerate
                 intake.INSTANCE.rampOn(1), //start running the ramp up
                 new Delay(lockerDelay),
                 locker.INSTANCE.open(),
