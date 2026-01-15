@@ -3,17 +3,22 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
+import dev.nextftc.hardware.driving.FieldCentric;
+import dev.nextftc.hardware.driving.HolonomicMode;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import dev.nextftc.hardware.impl.Direction;
+import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 public class driveTrain implements Subsystem {
     public static final driveTrain INSTANCE = new driveTrain();
     private driveTrain() {
     }
-    private final MotorEx frontLeft = new MotorEx( "frontLeft").reversed().brakeMode();
-    private final MotorEx frontRight = new MotorEx("frontRight").reversed().brakeMode();
-    private final MotorEx backLeft = new MotorEx( "backLeft").reversed().brakeMode();
-    private final MotorEx backRight = new MotorEx("backRight").reversed().brakeMode();
+    public final MotorEx frontLeft = new MotorEx( "frontLeft").brakeMode().reversed();
+    public final MotorEx frontRight = new MotorEx("frontRight").brakeMode();
+    public final MotorEx backLeft = new MotorEx( "backLeft").brakeMode().reversed();
+    public final MotorEx backRight = new MotorEx("backRight").brakeMode();
+    private IMUEx imu = new IMUEx("imu", Direction.BACKWARD, Direction.UP);
 
 
     public double getFLPower() {
@@ -37,8 +42,8 @@ public class driveTrain implements Subsystem {
                 backRight,
                 Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX()
+                Gamepads.gamepad1().rightStickX().mapToRange(place -> 0.5*place),
+                new FieldCentric(imu)
                 );
-
     }
 }
