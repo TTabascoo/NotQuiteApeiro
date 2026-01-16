@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
+import java.sql.Driver;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
+import dev.nextftc.hardware.driving.DriverControlledCommand;
 import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.HolonomicMode;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
@@ -34,16 +38,18 @@ public class driveTrain implements Subsystem {
         return backRight.getPower();
     }
     //pov u read the documentation: i love built in commands wowie 67
-    public Command driveControl() {
-        return new MecanumDriverControlled(
-                frontLeft,
-                frontRight,
-                backLeft,
-                backRight,
-                Gamepads.gamepad1().leftStickY().negate(),
+    public DriverControlledCommand driveControl() {
+        return new PedroDriverControlled(
+                Gamepads.gamepad1().leftStickY().negate(), //MAYBE NEGATE
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX().mapToRange(place -> 0.5*place),
-                new FieldCentric(imu)
-                );
+                Gamepads.gamepad1().rightStickX(),
+                false
+        );
+    }
+    public void driveControlOff() {
+        driveControl().cancel();
+    }
+    public void driveControlOn() {
+        driveControl().schedule();
     }
 }

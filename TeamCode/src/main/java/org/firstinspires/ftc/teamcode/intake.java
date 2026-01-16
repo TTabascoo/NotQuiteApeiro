@@ -51,12 +51,9 @@ public class intake implements Subsystem {
                 .whenBecomesFalse(rampOff());
 
         Gamepads.gamepad1().leftTrigger()
-                .greaterThan(0.1)
-                .whenBecomesTrue(rampOn(0.8))
+                .greaterThan(0.2)
+                .whenBecomesTrue(rampOn(0.6))
                 .whenBecomesFalse(rampOff());
-
-        Gamepads.gamepad1().dpadDown()
-                .whenBecomesTrue(() -> switchDirections());
     }
 
 }
