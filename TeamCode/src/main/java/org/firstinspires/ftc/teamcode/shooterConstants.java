@@ -16,7 +16,7 @@ public class shooterConstants {
     private static final double i = 0;
     private static final double d = 0;
     public static PIDCoefficients coefficients = new PIDCoefficients(p, i, d);
-    public static double target = 1900;
+    public static double target = 1700;
     public static double shooterdirection = 1;
     public static double kV = 0.00043;    //TO DO Tune kV, kS, P
     public static double kA;

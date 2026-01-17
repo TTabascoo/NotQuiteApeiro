@@ -9,7 +9,6 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -17,11 +16,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.ftc.components.BulkReadComponent;
 
 public class oneAutoFile {
     public static Command fullshoot(double acceleration, double lockerDelay, double shootingTime) {
@@ -100,7 +99,7 @@ public class oneAutoFile {
         );
     }
 
-    @Autonomous(name = "Auton 9 BLUE")
+    @Autonomous(name = "Auton 9 BLUE ONE FILE")
     public static class blueAuto extends NextFTCOpMode {
 
         public blueAuto() {
@@ -108,7 +107,8 @@ public class oneAutoFile {
                     new PedroComponent(Constants::createFollower),
                     new SubsystemComponent(shooter.INSTANCE),
                     new SubsystemComponent(intake.INSTANCE),
-                    new SubsystemComponent(locker.INSTANCE)
+                    new SubsystemComponent(locker.INSTANCE),
+                    BulkReadComponent.INSTANCE
             );
         }
         @Override
@@ -167,7 +167,7 @@ public class oneAutoFile {
 
     }
 
-    @Autonomous(name = "Auton 9 RED")
+    @Autonomous(name = "Auton 9 RED ONE FILE")
     public static class redAuto extends NextFTCOpMode {
 
         public redAuto() {
@@ -175,7 +175,8 @@ public class oneAutoFile {
                     new PedroComponent(Constants::createFollower),
                     new SubsystemComponent(shooter.INSTANCE),
                     new SubsystemComponent(intake.INSTANCE),
-                    new SubsystemComponent(locker.INSTANCE)
+                    new SubsystemComponent(locker.INSTANCE),
+                    BulkReadComponent.INSTANCE
             );
         }
 

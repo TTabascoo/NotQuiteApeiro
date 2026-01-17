@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 import java.sql.Driver;
+import java.util.Objects;
 
+import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -22,7 +25,8 @@ public class driveTrain implements Subsystem {
     public final MotorEx frontRight = new MotorEx("frontRight").brakeMode();
     public final MotorEx backLeft = new MotorEx( "backLeft").brakeMode().reversed();
     public final MotorEx backRight = new MotorEx("backRight").brakeMode();
-    private IMUEx imu = new IMUEx("imu", Direction.BACKWARD, Direction.UP);
+    public IMUEx imu = new IMUEx("imu", Direction.BACKWARD, Direction.UP).zeroed();
+
 
 
     public double getFLPower() {
@@ -46,10 +50,13 @@ public class driveTrain implements Subsystem {
                 false
         );
     }
-    public void driveControlOff() {
-        driveControl().cancel();
-    }
-    public void driveControlOn() {
-        driveControl().schedule();
-    }
+    DriverControlledCommand driveControl2 = (DriverControlledCommand) new PedroDriverControlled(
+            Gamepads.gamepad1().leftStickY().negate(), //MAYBE NEGATE
+                Gamepads.gamepad1().leftStickX().negate(),
+                Gamepads.gamepad1().rightStickX().negate().mapToRange(place -> 0.8*place),
+                false
+                        ).setInterruptible(true);
+
+
+
 }
