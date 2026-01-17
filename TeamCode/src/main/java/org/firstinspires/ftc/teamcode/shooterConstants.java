@@ -16,7 +16,7 @@ public class shooterConstants {
     private static final double i = 0;
     private static final double d = 0;
     public static PIDCoefficients coefficients = new PIDCoefficients(p, i, d);
-    public static double target = 1700;
+    public static double target = 1650;
     public static double shooterdirection = 1;
     public static double kV = 0.00043;    //TO DO Tune kV, kS, P
     public static double kA;
@@ -25,7 +25,7 @@ public class shooterConstants {
 
     public static double actualVelocity;
     public static double shootingSpotVel;
-    public static double threshold = 5;
-    public static KineticState tolerance = new KineticState(Double.POSITIVE_INFINITY, threshold, Double.POSITIVE_INFINITY);
+    public static double threshold = 100;
+    public static KineticState tolerance = new KineticState(Double.POSITIVE_INFINITY, threshold+target, Double.POSITIVE_INFINITY);
     public static double txRotationConstant;
 }

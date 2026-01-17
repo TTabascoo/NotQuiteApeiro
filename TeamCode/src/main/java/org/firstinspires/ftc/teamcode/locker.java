@@ -19,7 +19,7 @@ public class locker implements Subsystem {
     private final ServoEx locker = new ServoEx("locker");
 
     public Command open() {
-        return new InstantCommand(new SetPosition(locker, 0.5)).requires(this);
+        return new InstantCommand(new SetPosition(locker, 0.2)).requires(this);
     }
     public Command close() {
         return new InstantCommand(new SetPosition(locker, 0)).requires(this);

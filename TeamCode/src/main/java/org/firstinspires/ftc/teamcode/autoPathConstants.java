@@ -5,8 +5,8 @@ import com.pedropathing.paths.PathChain;
 
 public class autoPathConstants {
     public static final double headingStart = Math.toRadians(90);
-    public static final double scoreAngle = Math.toRadians(145);
-    public static final double pickUpAngle = Math.toRadians(0);
+    public static final double scoreAngle = Math.toRadians(326);
+    public static final double pickUpAngle = Math.toRadians(180);
     public static PathChain score1;
     public static PathChain pickUpPath1;
     public static PathChain pickUp;
@@ -23,9 +23,9 @@ public class autoPathConstants {
     public static Pose startPoseNow = new Pose(33, 135, headingStart);
     public static Pose scorePoseNow = new Pose(60, 101, scoreAngle );
     public static Pose pickUpPose1Now = new Pose(42, 84, pickUpAngle);
-    public static Pose pickUpPose2Now = new Pose(14, 84, pickUpAngle);
+    public static Pose pickUpPose2Now = new Pose(20, 84, pickUpAngle);
     public static Pose pickUpPose3Now = new Pose(42, 60, pickUpAngle);
-    public static Pose pickUpPose4now = new Pose(14, 60, pickUpAngle);
+    public static Pose pickUpPose4now = new Pose(20, 60, pickUpAngle);
 
 
 }

@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 import static com.bylazar.telemetry.PanelsTelemetry.INSTANCE;
 
+import static org.firstinspires.ftc.teamcode.autoPathConstants.scoreAngle;
+import static org.firstinspires.ftc.teamcode.shooterConstants.txRotationConstant;
+
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
@@ -52,6 +55,7 @@ public class teleOp extends NextFTCOpMode {
     public Limelight3A limelight;
     private double angleForScoring;
     public boolean driveActive;
+    public boolean isLeft;
 
 
     @Override
@@ -62,6 +66,8 @@ public class teleOp extends NextFTCOpMode {
         intake.INSTANCE.buttonMap();
         locker.INSTANCE.buttonMap();
         driveTrain.INSTANCE.driveControl2.schedule();
+        driveTrain.INSTANCE.driveControl2.setScalar(1);
+
         BindingManager.update();
     }
     @Override
@@ -71,12 +77,14 @@ public class teleOp extends NextFTCOpMode {
         telemetry.update();
         if (gamepad1.shareWasPressed()) {
             angleForScoring = Math.toRadians(35);
+            isLeft = false;
             telemetry.clear();
             telemetry.addLine("red selected!");
             telemetry.update();
         }
         if(gamepad1.optionsWasPressed()) {
-            angleForScoring = Math.toRadians(145);
+            angleForScoring = scoreAngle;
+            isLeft = true;
             telemetry.clear();
             telemetry.addLine("blue slelected1");
             telemetry.update();
@@ -92,41 +100,34 @@ public class teleOp extends NextFTCOpMode {
         limelight.start();
         limelight.pipelineSwitch(1);
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
+        follower().setStartingPose(new Pose(23, 84, Math.toRadians(180)));
 
     }
 
     @Override
     public void onUpdate() {
         BindingManager.update();
-        if(gamepad1.left_bumper) {
+        if(gamepad1.leftBumperWasPressed()) {
             driveActive = false;
+            CommandManager.INSTANCE.cancelCommand(driveTrain.INSTANCE.driveControl2);
             follower().turnTo(angleForScoring);
-
+            BindingManager.update();
         }
-        if(gamepad1.right_bumper) {
+        if(gamepad1.rightBumperWasPressed()) {
+            CommandManager.INSTANCE.scheduleCommand(driveTrain.INSTANCE.driveControl2);
             driveActive = true;
             follower().breakFollowing();
+            BindingManager.update();
         }
 
-//        if(driveActive) {
-//            driveTrain.INSTANCE.driveControlOff();
-//        }
-//
-//        if(follower().isBusy() || follower().isTurning()) {
-//            driveActive = false;
-//        } else {
-//            driveActive = true;
-//        }
 //        if(!driveActive) {
 //            LLResult result = limelight.getLatestResult();
 //
 //            if (result != null && result.isValid()) {
-//                driveTrain.INSTANCE.driveControlOn();
 //
 //                double tx = result.getTx();
 //                double ty = result.getTy();
 //                double ta = result.getTa();
-//
 //                Pose3D updatedPose3D = result.getBotpose();
 //                double x = updatedPose3D.getPosition().x;
 //                double y = updatedPose3D.getPosition().y;
@@ -142,11 +143,6 @@ public class teleOp extends NextFTCOpMode {
 //                telemetry.addData("Limelight", "No Targets");
 //                telemetry.update();
 //            }
-//            follower().turnTo(Math.toRadians(angleForScoring));
-//            double holdingX = follower().getPose().getX();
-//            double holdingY = follower().getPose().getY();
-//            double holdingYaw = follower().getPose().getHeading();
-//            follower().holdPoint(new Pose(holdingX, holdingY, holdingYaw));
 //
 //        }
 
@@ -183,6 +179,7 @@ public class teleOp extends NextFTCOpMode {
         telemetry.addData("shooter direction", shooter.INSTANCE.getDirection());
         telemetry.addData("locker position", locker.INSTANCE.getPosition());
         telemetry.update();
+        panelsTelemetry.addData("tx rotation constant", txRotationConstant);
         panelsTelemetry.addData("actual vel", shooter.INSTANCE.getVelocity());
         panelsTelemetry.addData("target,", shooter.INSTANCE.getTarget());
         panelsTelemetry.update();

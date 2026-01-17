@@ -25,7 +25,8 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class oneAutoFile {
     public static Command fullshoot(double acceleration, double lockerDelay, double shootingTime) {
         return new SequentialGroup(
-                shooter.INSTANCE.shootCommand(), //start running the shooter first to accelerate
+                shooter.INSTANCE.shootCommand(),
+                new Delay(acceleration),
                 intake.INSTANCE.rampOn(1), //start running the ramp up
                 new Delay(lockerDelay),
                 locker.INSTANCE.open(),
@@ -148,17 +149,17 @@ public class oneAutoFile {
         public Command fullAuto() {
             return new SequentialGroup(
                     new FollowPath(score1),
-                    fullshoot(0.3, 0.2,5),
+                    fullshoot(0.9, 1.2,5),
                     stopRamp(),
                     new FollowPath(pickUpPath1),
                     new FollowPath(pickUp).and(intake.INSTANCE.rampOn(1)),
                     intake.INSTANCE.rampOff(),
                     new FollowPath(score2),
-                    fullshoot(0.3, 0.2, 5),
+                    fullshoot(0.3, 1.2, 5),
                     new FollowPath(pickupPath2),
                     new FollowPath(pickUp2).and(intake.INSTANCE.rampOn(1)),
                     new FollowPath(score3),
-                    fullshoot(0.3, 0.2, 5));
+                    fullshoot(0.3, 1.2, 5));
         }
 
         //PATH STUFF

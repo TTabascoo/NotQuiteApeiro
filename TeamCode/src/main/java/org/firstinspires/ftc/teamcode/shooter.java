@@ -58,10 +58,10 @@ public class shooter implements Subsystem {
     }
 
     public Command shootCommand() {
-        return new RunToVelocity(controller, target, tolerance);
+        return new RunToVelocity(controller, target, tolerance).setInterruptible(true).requires(this);
     }
     public Command stopCommand() {
-        return new RunToVelocity(controller, target, tolerance);
+        return new RunToVelocity(controller, target, tolerance).setInterruptible(true).requires(this);
     }
 
     public double getPower1() {
