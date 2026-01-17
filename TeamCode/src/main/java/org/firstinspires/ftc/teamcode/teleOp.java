@@ -55,6 +55,7 @@ public class teleOp extends NextFTCOpMode {
     private static FieldManager panelsField = PanelsField.INSTANCE.getField();
     public Limelight3A limelight;
     public boolean locked;
+    private double angleForScoring;
 
 
     @Override
@@ -63,6 +64,17 @@ public class teleOp extends NextFTCOpMode {
         intake.INSTANCE.buttonMap();
         locker.INSTANCE.buttonMap();
         driveTrain.INSTANCE.driveControl().schedule();
+    }
+    @Override
+    public void onWaitForStart() {
+        telemetry.addLine("share for red!");
+        telemetry.addLine("options for blue!");
+        if (gamepad1.shareWasPressed()) {
+            angleForScoring = 35;
+        }
+        if(gamepad1.optionsWasPressed()) {
+            angleForScoring = 145;
+        }
     }
 
 
@@ -105,7 +117,7 @@ public class teleOp extends NextFTCOpMode {
             }
 
         if (gamepad1.leftBumperWasPressed()) {
-            follower().turnTo(Math.toRadians(145));
+            follower().turnTo(Math.toRadians(angleForScoring));
 
             double holdingX = follower().getPose().getX();
             double holdingY = follower().getPose().getY();

@@ -20,5 +20,12 @@ public class autoPathConstants {
     public static Pose pickUpPose2;
     public static Pose pickUpPose3;
     public static Pose pickUpPose4;
+    public static Pose startPoseNow = new Pose(33, 135, headingStart);
+    public static Pose scorePoseNow = new Pose(60, 101, scoreAngle );
+    public static Pose pickUpPose1Now = new Pose(42, 84, pickUpAngle);
+    public static Pose pickUpPose2Now = new Pose(14, 84, pickUpAngle);
+    public static Pose pickUpPose3Now = new Pose(42, 60, pickUpAngle);
+    public static Pose pickUpPose4now = new Pose(14, 60, pickUpAngle);
+
 
 }

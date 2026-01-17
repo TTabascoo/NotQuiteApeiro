@@ -102,13 +102,6 @@ public class oneAutoFile {
 
     @Autonomous(name = "Auton 9 BLUE")
     public static class blueAuto extends NextFTCOpMode {
-        public static Pose startPose = new Pose(33, 135, headingStart);
-        public static Pose scorePose = new Pose(60, 101, scoreAngle );
-        public static Pose pickUpPose1 = new Pose(42, 84, pickUpAngle);
-        public static Pose pickUpPose2 = new Pose(14, 84, pickUpAngle);
-        public static Pose pickUpPose3 = new Pose(42, 60, pickUpAngle);
-        public static Pose pickUpPose4 = new Pose(14, 60, pickUpAngle);
-
 
         public blueAuto() {
             addComponents(
@@ -120,6 +113,13 @@ public class oneAutoFile {
         }
         @Override
         public void onInit() {
+            startPose = startPoseNow;
+            scorePose = scorePoseNow;
+            pickUpPose1 = pickUpPose1Now;
+            pickUpPose2 = pickUpPose2Now;
+            pickUpPose3 = pickUpPose3Now;
+            pickUpPose4 = pickUpPose4now;
+
             buildPaths();
             follower().setStartingPose(startPose);
             shooter.INSTANCE.stop(); //SCHEDULE STOPS TO MAKE SURE IT STOPS RUNNING EVERY INIT
@@ -169,12 +169,6 @@ public class oneAutoFile {
 
     @Autonomous(name = "Auton 9 RED")
     public static class redAuto extends NextFTCOpMode {
-        public Pose startPose = mirror(autoPathConstants.startPose);
-        public Pose scorePose = mirror(autoPathConstants.scorePose);
-        public Pose pickUpPose1 = mirror(autoPathConstants.pickUpPose1);
-        public Pose pickUpPose2 = mirror(autoPathConstants.pickUpPose2);
-        public Pose pickUpPose3 = mirror(autoPathConstants.pickUpPose3);
-        public Pose pickUpPose4 = mirror(autoPathConstants.pickUpPose4);
 
         public redAuto() {
             addComponents(
@@ -187,6 +181,12 @@ public class oneAutoFile {
 
         @Override
         public void onInit() {
+            startPose = mirror(startPoseNow);
+            scorePose = mirror(scorePoseNow);
+            pickUpPose1 = mirror(pickUpPose1Now);
+            pickUpPose2 = mirror(pickUpPose2Now);
+            pickUpPose3 = mirror(pickUpPose3Now);
+            pickUpPose4 = mirror(pickUpPose4now);
             buildPaths();
             follower().setStartingPose(startPose);
             shooter.INSTANCE.stopCommand().schedule();
