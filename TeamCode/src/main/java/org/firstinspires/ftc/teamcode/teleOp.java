@@ -9,10 +9,13 @@ import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -54,6 +57,9 @@ public class teleOp extends NextFTCOpMode {
     private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
     public Limelight3A limelight;
     private double angleForScoring;
+    private Pose holdingPose;
+    private PathChain selfPath;
+    private boolean turnOn;
     public boolean driveActive;
     public boolean isLeft;
 
@@ -107,13 +113,22 @@ public class teleOp extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         BindingManager.update();
+        follower().update();
         if(gamepad1.leftBumperWasPressed()) {
             driveActive = false;
+            turnOn = true;
             CommandManager.INSTANCE.cancelCommand(driveTrain.INSTANCE.driveControl2);
-            follower().turnTo(angleForScoring);
             BindingManager.update();
         }
+        if(turnOn) {
+            holdingPose = follower().getPose();
+            selfPath = follower().pathBuilder().addPath(new BezierPoint(new Pose(holdingPose.getX(), holdingPose.getY(), holdingPose.getHeading()))).build();
+            follower().followPath(selfPath);
+        }
+
+
         if(gamepad1.rightBumperWasPressed()) {
+            turnOn = false;
             CommandManager.INSTANCE.scheduleCommand(driveTrain.INSTANCE.driveControl2);
             driveActive = true;
             follower().breakFollowing();
@@ -168,16 +183,14 @@ public class teleOp extends NextFTCOpMode {
 //            follower().breakFollowing();
 //        }
 //        follower().update();
-        draw();
         telemetry.addData("drive active ? ", driveActive);
         telemetry.addData("sclar", driveTrain.INSTANCE.driveControl2.getScalar());
         telemetry.addData("command", CommandManager.INSTANCE.snapshot());
         telemetry.addData("intake power", intake.INSTANCE.power());
-        telemetry.addData("intake direction", intake.INSTANCE.getDirection());
-        telemetry.addData("shooter power 1", shooter.INSTANCE.getPower1());
-        telemetry.addData("shooter power 2", shooter.INSTANCE.getPower2());
-        telemetry.addData("shooter direction", shooter.INSTANCE.getDirection());
+        telemetry.addData("follower x", follower().getPose());
         telemetry.addData("locker position", locker.INSTANCE.getPosition());
+        telemetry.addData("is turning", follower().isTurning());
+        telemetry.addData("is busy ", follower().isBusy());
         telemetry.update();
         panelsTelemetry.addData("tx rotation constant", txRotationConstant);
         panelsTelemetry.addData("actual vel", shooter.INSTANCE.getVelocity());
