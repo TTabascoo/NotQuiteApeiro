@@ -82,15 +82,15 @@ public class teleOp extends NextFTCOpMode {
         telemetry.addLine("options for blue!");
         telemetry.update();
         if (gamepad1.shareWasPressed()) {
-            angleForScoring = Math.toRadians(35);
-            isLeft = false;
+            follower().setStartingPose(new Pose(0, 0, Math.toRadians(0)));
+            angleForScoring = Math.toRadians(215);
             telemetry.clear();
             telemetry.addLine("red selected!");
             telemetry.update();
         }
         if(gamepad1.optionsWasPressed()) {
-            angleForScoring = scoreAngle;
-            isLeft = true;
+            angleForScoring = Math.toRadians(300);
+            follower().setStartingPose(new Pose(0, 0, Math.toRadians(180)));
             telemetry.clear();
             telemetry.addLine("blue slelected1");
             telemetry.update();
@@ -106,7 +106,7 @@ public class teleOp extends NextFTCOpMode {
         limelight.start();
         limelight.pipelineSwitch(1);
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
-        follower().setStartingPose(new Pose(23, 84, Math.toRadians(180)));
+        follower().setStartingPose(new Pose(0, 0, Math.toRadians(180)));
 
     }
 
@@ -120,10 +120,13 @@ public class teleOp extends NextFTCOpMode {
             CommandManager.INSTANCE.cancelCommand(driveTrain.INSTANCE.driveControl2);
             BindingManager.update();
         }
-        if(turnOn) {
+        if(turnOn && !follower().isLocalizationNAN()) {
             holdingPose = follower().getPose();
-            selfPath = follower().pathBuilder().addPath(new BezierPoint(new Pose(holdingPose.getX(), holdingPose.getY(), holdingPose.getHeading()))).build();
-            follower().followPath(selfPath);
+            double holdingPoseX = follower().getPose().getX();
+            double holdingPoseY = follower().getPose().getY();
+
+            selfPath = follower().pathBuilder().addPath(new BezierPoint(new Pose(holdingPoseX, holdingPoseY))).setConstantHeadingInterpolation(angleForScoring).build();
+            follower().followPath(selfPath, true);
         }
 
 
@@ -186,11 +189,15 @@ public class teleOp extends NextFTCOpMode {
         telemetry.addData("drive active ? ", driveActive);
         telemetry.addData("sclar", driveTrain.INSTANCE.driveControl2.getScalar());
         telemetry.addData("command", CommandManager.INSTANCE.snapshot());
-        telemetry.addData("intake power", intake.INSTANCE.power());
         telemetry.addData("follower x", follower().getPose());
-        telemetry.addData("locker position", locker.INSTANCE.getPosition());
+        telemetry.addData("holding pose", holdingPose);
+        telemetry.addData("holding angle", angleForScoring);
+
+
         telemetry.addData("is turning", follower().isTurning());
         telemetry.addData("is busy ", follower().isBusy());
+        telemetry.addData("current path", follower().getCurrentPath());
+
         telemetry.update();
         panelsTelemetry.addData("tx rotation constant", txRotationConstant);
         panelsTelemetry.addData("actual vel", shooter.INSTANCE.getVelocity());

@@ -56,6 +56,9 @@ public class shooter implements Subsystem {
     public void stop() {
         controller.setGoal(new KineticState(0, 0));
     }
+    public Command stopCommand2() {
+        return new InstantCommand(() -> controller.setGoal(new KineticState(0, 0)));
+    }
 
     public Command shootCommand() {
         return new RunToVelocity(controller, target, tolerance).setInterruptible(true).requires(this);

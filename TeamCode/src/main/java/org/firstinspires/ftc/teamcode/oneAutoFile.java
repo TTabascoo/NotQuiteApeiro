@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.bylazar.telemetry.PanelsTelemetry.INSTANCE;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.headingStart;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.pickUpAngle;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.pickUpPose2;
 import static org.firstinspires.ftc.teamcode.autoPathConstants.*;
+import static org.firstinspires.ftc.teamcode.shooterConstants.target;
 import static java.lang.Math.toDegrees;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -90,18 +94,33 @@ public class oneAutoFile {
                 )
                 .setLinearHeadingInterpolation(pickUpAngle, scoreAngle)
                 .build();
+        finalPath = follower()
+                .pathBuilder()
+                .addPath(new BezierLine(scorePose, finalPose)
+                )
+                .setLinearHeadingInterpolation(scoreAngle, finalAngle)
+                .build();
+    }
+    public static void buildRightPath() {
+        rightPath = follower().pathBuilder()
+                .addPath(
+                        new BezierLine(startPose, rightPose)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                .build();
     }
 
 
     //COMMANDS THAT COMBINE BOTH INTAKE AND SHOOTER
     public static Command stopRamp() {
         return new SequentialGroup(
-                shooter.INSTANCE.stopCommand().and(intake.INSTANCE.rampOff())
+                shooter.INSTANCE.stopCommand2().and(intake.INSTANCE.rampOff())
         );
     }
 
     @Autonomous(name = "Auton 9 BLUE ONE FILE")
     public static class blueAuto extends NextFTCOpMode {
+        private final TelemetryManager panelsTelemetry = INSTANCE.getTelemetry() ;
 
         public blueAuto() {
             addComponents(
@@ -109,7 +128,8 @@ public class oneAutoFile {
                     new SubsystemComponent(shooter.INSTANCE),
                     new SubsystemComponent(intake.INSTANCE),
                     new SubsystemComponent(locker.INSTANCE),
-                    BulkReadComponent.INSTANCE
+                    BulkReadComponent.INSTANCE,
+                    CommandManager.INSTANCE
             );
         }
         @Override
@@ -120,6 +140,7 @@ public class oneAutoFile {
             pickUpPose2 = pickUpPose2Now;
             pickUpPose3 = pickUpPose3Now;
             pickUpPose4 = pickUpPose4now;
+            finalPose = finalPoseNow;
 
             buildPaths();
             follower().setStartingPose(startPose);
@@ -130,6 +151,9 @@ public class oneAutoFile {
         @Override
         public void onUpdate() {
             follower().update();
+            panelsTelemetry.addData("shooter target", target);
+            panelsTelemetry.addData("actual vel", shooter.INSTANCE.getVelocity());
+            panelsTelemetry.update();
             telemetry.addData("x", follower().getPose().getX());
             telemetry.addData("y", follower().getPose().getY());
             telemetry.addData("heading", follower().getPose().getHeading());
@@ -149,17 +173,18 @@ public class oneAutoFile {
         public Command fullAuto() {
             return new SequentialGroup(
                     new FollowPath(score1),
-                    fullshoot(0.9, 1.2,5),
+                    fullshoot(0.9, 1.2,4),
                     stopRamp(),
                     new FollowPath(pickUpPath1),
                     new FollowPath(pickUp).and(intake.INSTANCE.rampOn(1)),
                     intake.INSTANCE.rampOff(),
                     new FollowPath(score2),
-                    fullshoot(0.3, 1.2, 5),
+                    fullshoot(0.9, 1.2, 4),
                     new FollowPath(pickupPath2),
-                    new FollowPath(pickUp2).and(intake.INSTANCE.rampOn(1)),
+                    new FollowPath(pickUp2).and(intake.INSTANCE.rampOn(4)),
                     new FollowPath(score3),
-                    fullshoot(0.3, 1.2, 5));
+                    fullshoot(0.9, 1.2, 5),
+                    new FollowPath(finalPath));
         }
 
         //PATH STUFF
@@ -189,9 +214,10 @@ public class oneAutoFile {
             pickUpPose2 = mirror(pickUpPose2Now);
             pickUpPose3 = mirror(pickUpPose3Now);
             pickUpPose4 = mirror(pickUpPose4now);
+            finalPose = mirror(finalPoseNow);
             buildPaths();
             follower().setStartingPose(startPose);
-            shooter.INSTANCE.stopCommand().schedule();
+            shooter.INSTANCE.stop();
             intake.INSTANCE.rampOff().schedule();
         }
 
@@ -234,9 +260,74 @@ public class oneAutoFile {
             double newX;
             double newHeading;
             newX = 144 - originalPose.getX();
-            newHeading = 180 - toDegrees(originalPose.getHeading());
+            if(originalPose.getHeading() <= 180) {
+                newHeading = 180 - toDegrees(originalPose.getHeading());
+            } else {
+                newHeading = toDegrees(originalPose.getHeading())-180;
+            }
             return new Pose(newX, originalPose.getY(), newHeading);
         }
 
+    }
+    @Autonomous(name = "blue left auto")
+    public static class RightAuto extends NextFTCOpMode {
+        public RightAuto() {
+            addComponents(
+                    new PedroComponent(Constants::createFollower),
+                    BulkReadComponent.INSTANCE
+            );
+        }
+        @Override
+        public void onInit() {
+            startPose = new Pose(52, 8);
+            rightPose = new Pose(22, 8);
+            follower().setStartingPose(startPose);
+            buildRightPath();
+        }
+        @Override
+        public void onStartButtonPressed() {
+            fullAutoRight().schedule();
+        }
+        public Command fullAutoRight() {
+            return new SequentialGroup(
+                    new FollowPath(rightPath)
+            );
+        }
+        @Override
+        public void onUpdate() {
+            follower().update();
+        }
+
+    }
+    @Autonomous(name = "red right auto")
+    public static class LeftAuto extends NextFTCOpMode {
+        public LeftAuto() {
+        addComponents(
+                new PedroComponent(Constants::createFollower),
+                BulkReadComponent.INSTANCE
+        );
+    }
+
+        @Override
+        public void onInit() {
+            startPose = new Pose(84, 8);
+            rightPose = new Pose(115, 8);
+            buildRightPath();
+            follower().setPose(startPose);
+        }
+        @Override
+        public void onStartButtonPressed() {
+            rightPathAuto().schedule();
+        }
+        public Command rightPathAuto() {
+            return new SequentialGroup(
+                    new FollowPath(rightPath)
+            );
+        }
+
+        @Override
+        public void onUpdate() {
+            follower().update();
+        }
     }
 }

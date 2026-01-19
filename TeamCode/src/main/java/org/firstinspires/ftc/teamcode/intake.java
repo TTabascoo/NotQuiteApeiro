@@ -29,7 +29,7 @@ public class intake implements Subsystem {
 //    }
 
     public Command rampOn(double power) {
-        return new InstantCommand( new SetPower(intake, power)).requires(this);
+        return new InstantCommand(new SetPower(intake, power)).requires(this);
     }
     public Command rampOff() {
         return new InstantCommand(new SetPower(intake, 0)).requires(this);
@@ -52,7 +52,7 @@ public class intake implements Subsystem {
 
         Gamepads.gamepad1().leftTrigger()
                 .greaterThan(0.2)
-                .whenBecomesTrue(rampOn(0.6))
+                .whenBecomesTrue(rampOn(0.9))
                 .whenBecomesFalse(rampOff());
     }
 
