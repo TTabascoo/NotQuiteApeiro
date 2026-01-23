@@ -54,7 +54,7 @@ public class driveTrain implements Subsystem {
             Gamepads.gamepad1().leftStickY().negate(), //MAYBE NEGATE
                 Gamepads.gamepad1().leftStickX().negate(),
                 Gamepads.gamepad1().rightStickX().negate().mapToRange(place -> 0.8*place),
-                false
+                true
                         );
 
 

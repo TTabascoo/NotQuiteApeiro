@@ -43,13 +43,6 @@ public class shooter implements Subsystem {
         shooter2.setPower(-powerNeeded);
     }
 
-    //NON PID COMMANDS
-    public Command testShoot(double power) {
-        return new InstantCommand(new SetPower(shooterGroup, power));
-    }
-    public Command testStop() {
-        return new InstantCommand(new SetPower(shooterGroup, 0));
-    }
     public void shoot() {
         controller.setGoal(new KineticState(0, target));
     }
@@ -82,12 +75,8 @@ public class shooter implements Subsystem {
         shooterdirection = shooterdirection*-1;
     }
 
-    public double getDirection() {
-        return shooterdirection;
-    }
-
-    public double getGoal() {
-        return controller.calculate(shooterGroup.getState());
+    public void setTarget(double newTarget) {
+        target = newTarget;
     }
     public void buttonMap() {
         Gamepads.gamepad1().b()
