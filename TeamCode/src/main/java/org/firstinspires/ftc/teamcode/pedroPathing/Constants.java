@@ -42,18 +42,18 @@ public class Constants {
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
             .forwardTicksToInches(0.0029944823)
             .strafeTicksToInches(0.00295380764)
-            .turnTicksToInches(0.0019683)
+            .turnTicksToInches(0.00386382235366047)
             .leftPodY(7.15)
             .rightPodY(-7.15)
             .strafePodX(-7)
-            .leftEncoder_HardwareMapName("backRight")
-            .rightEncoder_HardwareMapName("backLeft") //CHECK THAT THEY ARE IN THE RIGHT PORTS
-            .strafeEncoder_HardwareMapName("frontRight")
+            .leftEncoder_HardwareMapName("frontRight")
+            .rightEncoder_HardwareMapName("frontLeft") //CHECK THAT THEY ARE IN THE RIGHT PORTS
+            .strafeEncoder_HardwareMapName("backLeft")
             .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.FORWARD)
             .IMU_HardwareMapName("imu")
-            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .mecanumDrivetrain(driveConstants)
