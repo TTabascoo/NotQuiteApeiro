@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -6,7 +6,10 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.autoPathConstants;
+import org.firstinspires.ftc.teamcode.intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.shooter;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -18,9 +21,9 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@Autonomous(name = "red auto far")
-public class auto5 extends NextFTCOpMode {
-    public auto5() {
+@Autonomous(name = "blue auto far")
+public class blueAutoFarVisAcc extends NextFTCOpMode {
+    public blueAutoFarVisAcc() {
         addComponents(
                 new SubsystemComponent(shooter.INSTANCE, intake.INSTANCE),
                 new PedroComponent(Constants::createFollower)
@@ -31,7 +34,7 @@ public class auto5 extends NextFTCOpMode {
     public void onInit() {
         shooter.INSTANCE.setTarget(2050);
         paths = new Paths(PedroComponent.follower());
-        PedroComponent.follower().setStartingPose(new Pose(88, 8, Math.toRadians(90)));
+        PedroComponent.follower().setStartingPose(new Pose(56, 8, Math.toRadians(90)));
         shooter.INSTANCE.stop();
         intake.INSTANCE.rampOff().schedule();
     }
@@ -66,6 +69,7 @@ public class auto5 extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         PedroComponent.follower().update();
+        autoPathConstants.pose = PedroComponent.follower().getPose();
     }
 
     public static class Paths {
@@ -77,32 +81,32 @@ public class auto5 extends NextFTCOpMode {
         public PathChain Path6;
         public PathChain Path7;
 
-        public Paths(Follower follower) {
+        public Paths (Follower follower) {
             Path1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(88.000, 8.000),
+                                    new Pose(56.000, 8.000),
 
-                                    new Pose(86.000, 15.000)
+                                    new Pose(55.376, 11.241)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(69))
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(286))
 
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(86.000, 15.000),
+                                    new Pose(55.376, 11.241),
 
-                                    new Pose(103.000, 35.000)
+                                    new Pose(39.993, 34.551)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(69), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(286), Math.toRadians(180))
 
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(103.000, 35.000),
+                                    new Pose(39.993, 34.551),
 
-                                    new Pose(130.000, 35.000)
+                                    new Pose(12.779, 34.669)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -110,29 +114,29 @@ public class auto5 extends NextFTCOpMode {
 
             Path4 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(130.000, 35.000),
+                                    new Pose(12.779, 34.669),
 
-                                    new Pose(86.000, 15.000)
+                                    new Pose(55.376, 10.886)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(69))
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(286))
 
                     .build();
 
             Path5 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(86.000, 15.000),
+                                    new Pose(55.376, 10.886),
 
-                                    new Pose(102.000, 60.000)
+                                    new Pose(40.230, 60.345)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(69), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(286), Math.toRadians(180))
 
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(102.000, 60.000),
+                                    new Pose(40.230, 60.345),
 
-                                    new Pose(130.000, 60.000)
+                                    new Pose(12.897, 59.753)
                             )
                     ).setConstantHeadingInterpolation(Math.toRadians(180))
 
@@ -140,11 +144,11 @@ public class auto5 extends NextFTCOpMode {
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(130.000, 60.000),
+                                    new Pose(12.897, 59.753),
 
-                                    new Pose(86.000, 15.000)
+                                    new Pose(55.612, 11.004)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(69))
+                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(286))
 
                     .build();
         }

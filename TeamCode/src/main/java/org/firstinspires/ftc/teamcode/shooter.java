@@ -86,6 +86,11 @@ public class shooter implements Subsystem {
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> switchDirections());
+
+        Gamepads.gamepad2().share()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(() -> setTarget(1650))
+                .whenBecomesFalse(() -> setTarget(2050));
     }
     public boolean reachedTarget() {
         return Math.abs(shooter.getVelocity() - target) <= threshold;

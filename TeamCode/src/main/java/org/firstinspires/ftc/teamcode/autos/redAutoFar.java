@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
@@ -12,7 +12,10 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.autoPathConstants;
+import org.firstinspires.ftc.teamcode.intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.shooter;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
@@ -26,9 +29,10 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "blue auto far")
-public class auto4 extends NextFTCOpMode {
-    public auto4() {
+//TESTED BLUE FAR MIRRORED (NOT VIZ ACCURATE)
+@Autonomous(name = "red auto far")
+public class redAutoFar extends NextFTCOpMode {
+    public redAutoFar() {
         addComponents(
                 new SubsystemComponent(shooter.INSTANCE, intake.INSTANCE),
                 new PedroComponent(Constants::createFollower),
@@ -36,14 +40,15 @@ public class auto4 extends NextFTCOpMode {
                 CommandManager.INSTANCE
         );
     }
-    private FieldManager panelsField = PanelsField.INSTANCE.getField();
+    private final FieldManager panelsField = PanelsField.INSTANCE.getField();
     private Paths paths;
     @Override
     public void onInit() {
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
         shooter.INSTANCE.setTarget(2050);
+
         paths = new Paths(PedroComponent.follower());
-        PedroComponent.follower().setStartingPose(new Pose(56, 8, Math.toRadians(270)));
+        PedroComponent.follower().setStartingPose(new Pose(88, 8, Math.toRadians(-90)));
         shooter.INSTANCE.stop();
         intake.INSTANCE.rampOff().schedule();
     }
@@ -90,6 +95,7 @@ public class auto4 extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         PedroComponent.follower().update();
+        autoPathConstants.pose = PedroComponent.follower().getPose();
         drawDebug(PedroComponent.follower());
     }
 
@@ -102,78 +108,79 @@ public class auto4 extends NextFTCOpMode {
         public PathChain Path6;
         public PathChain Path7;
 
-        public Paths (Follower follower) {
+        public Paths(Follower follower) {
             Path1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(56.000, 8.000),
+                                    new Pose(88.000, 8.000),
 
-                                    new Pose(55.376, 11.241)
+                                    new Pose(88.624, 11.241)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(295))
+                    ).setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-116))
 
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(55.376, 11.241),
+                                    new Pose(88.624, 11.241),
 
-                                    new Pose(49, 34.551)
+                                    new Pose(99.311, 34.774)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(295), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(-116), Math.toRadians(0))
 
                     .build();
 
             Path3 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 34.551),
+                                    new Pose(99.311, 34.774),
 
-                                    new Pose(17, 34.669)
+                                    new Pose(131.221, 34.669)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(180))
+                    ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                     .build();
 
             Path4 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(17, 34.669),
+                                    new Pose(131.221, 34.669),
 
-                                    new Pose(55.376, 15)
+                                    new Pose(88.769, 12.745)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(296))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-116))
 
                     .build();
 
             Path5 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(55.376, 15),
+                                    new Pose(88.769, 12.745),
 
-                                    new Pose(49, 60.345)
+                                    new Pose(97.285, 60.122)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(-116), Math.toRadians(0))
 
                     .build();
 
             Path6 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(49, 60.345),
+                                    new Pose(97.285, 60.122),
 
-                                    new Pose(17, 59.753)
+                                    new Pose(131.103, 59.753)
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(180))
+                    ).setConstantHeadingInterpolation(Math.toRadians(0))
 
                     .build();
 
             Path7 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(17, 59.753),
+                                    new Pose(131.103, 59.753),
 
-                                    new Pose(55.612, 20)
+                                    new Pose(88.388, 13.240)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(298))
+                    ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-116))
 
                     .build();
         }
     }
+
     public static final double ROBOT_RADIUS = 9; // woah
 
     private final Style robotLook = new Style(

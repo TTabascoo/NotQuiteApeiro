@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 import static com.bylazar.telemetry.PanelsTelemetry.INSTANCE;
 
-import static org.firstinspires.ftc.teamcode.autoPathConstants.scoreAngle;
-import static org.firstinspires.ftc.teamcode.autoPathConstants.startPose;
-import static org.firstinspires.ftc.teamcode.autoPathConstants.startPoseNow;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
 import static org.firstinspires.ftc.teamcode.shooterConstants.txRotationConstant;
 
 import com.bylazar.camerastream.CameraStreamPluginConfig;
@@ -20,6 +16,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathBuilder;
@@ -120,7 +117,7 @@ public class teleOp extends NextFTCOpMode {
         limelight.start();
         limelight.pipelineSwitch(1);
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
-        follower().setStartingPose(startPoseNow);
+        follower().setStartingPose(autoPathConstants.pose);
 
     }
 
@@ -129,6 +126,7 @@ public class teleOp extends NextFTCOpMode {
         BindingManager.update();
         follower().update();
         drawDebug(follower());
+
         if(gamepad1.leftBumperWasPressed()) {
             driveActive = false;
             turnOn = true;
