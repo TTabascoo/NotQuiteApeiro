@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
+@Configurable
 public class autoPathConstants {
     public static final double headingStart = Math.toRadians(90);
-    public static final double scoreAngle = Math.toRadians(300);
-    public static final double pickUpAngle = Math.toRadians(180);
+    public static final double scoreAngle = Math.toRadians(145);
+    public static final double pickUpAngle = Math.toRadians(0);
     public static final double finalAngle = Math.toRadians(180);
     public static PathChain score1;
     public static PathChain rightPath;

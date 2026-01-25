@@ -25,7 +25,7 @@ public class Constants {
             .mass(11.7934)
             ;
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.96, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1.32, 0.99);
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .xVelocity(60.029498969)
@@ -42,13 +42,13 @@ public class Constants {
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
             .forwardTicksToInches(0.0029944823)
             .strafeTicksToInches(0.00295380764)
-            .turnTicksToInches(0.00386382235366047)
-            .leftPodY(7.15)
-            .rightPodY(-7.15)
+            .turnTicksToInches(0.00380163)
+            .leftPodY(7.5)
+            .rightPodY(-7.5)
             .strafePodX(-7)
-            .leftEncoder_HardwareMapName("frontRight")
-            .rightEncoder_HardwareMapName("frontLeft") //CHECK THAT THEY ARE IN THE RIGHT PORTS
-            .strafeEncoder_HardwareMapName("backLeft")
+            .leftEncoder_HardwareMapName("backRight")
+            .rightEncoder_HardwareMapName("backLeft") //CHECK THAT THEY ARE IN THE RIGHT PORTS
+            .strafeEncoder_HardwareMapName("frontRight")
             .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.FORWARD)

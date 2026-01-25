@@ -24,7 +24,6 @@ public class shooterConstants {
     public static BasicFeedforwardParameters ffcoefficients = new BasicFeedforwardParameters(kV, kA, kS);
 
     public static double actualVelocity;
-    public static double shootingSpotVel;
     public static double threshold = 100;
     public static KineticState tolerance = new KineticState(Double.POSITIVE_INFINITY, threshold+target, Double.POSITIVE_INFINITY);
     public static double txRotationConstant;
