@@ -1,19 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 import static com.bylazar.telemetry.PanelsTelemetry.*;
-import static org.firstinspires.ftc.teamcode.shooterConstants.actualVelocity;
-import static org.firstinspires.ftc.teamcode.shooterConstants.kA;
-import static org.firstinspires.ftc.teamcode.shooterConstants.kS;
-import static org.firstinspires.ftc.teamcode.shooterConstants.kV;
-import static org.firstinspires.ftc.teamcode.shooterConstants.target;
+import static org.firstinspires.ftc.teamcode.constants.shooterConstants.actualVelocity;
+import static org.firstinspires.ftc.teamcode.constants.shooterConstants.target;
 
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
-import com.bylazar.telemetry.PanelsTelemetry;
 
-import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
+import org.firstinspires.ftc.teamcode.constants.shooterConstants;
+
 import dev.nextftc.ftc.NextFTCOpMode;
 
 @TeleOp

@@ -1,40 +1,31 @@
 package org.firstinspires.ftc.teamcode;
 import static com.bylazar.telemetry.PanelsTelemetry.INSTANCE;
 
-import static org.firstinspires.ftc.teamcode.shooterConstants.txRotationConstant;
+import static org.firstinspires.ftc.teamcode.constants.shooterConstants.txRotationConstant;
 
-import com.bylazar.camerastream.CameraStreamPluginConfig;
 import com.bylazar.field.FieldManager;
 import com.bylazar.field.PanelsField;
 import com.bylazar.field.Style;
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.Localizer;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.stream.CameraStreamClient;
+import org.firstinspires.ftc.teamcode.constants.autoPathConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.intake;
+import org.firstinspires.ftc.teamcode.subsystems.locker;
+import org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.CommandManager;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;

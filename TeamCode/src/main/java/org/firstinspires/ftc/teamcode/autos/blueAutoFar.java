@@ -12,10 +12,10 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.autoPathConstants;
-import org.firstinspires.ftc.teamcode.intake;
+import org.firstinspires.ftc.teamcode.constants.autoPathConstants;
+import org.firstinspires.ftc.teamcode.subsystems.intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.shooter;
+import org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;

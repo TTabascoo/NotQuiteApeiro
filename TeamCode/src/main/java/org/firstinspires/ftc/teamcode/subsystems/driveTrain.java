@@ -1,18 +1,9 @@
-package org.firstinspires.ftc.teamcode;
-import java.sql.Driver;
-import java.util.Objects;
+package org.firstinspires.ftc.teamcode.subsystems;
 
-import dev.nextftc.bindings.BindingManager;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
-import dev.nextftc.hardware.driving.FieldCentric;
-import dev.nextftc.hardware.driving.HolonomicMode;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -50,7 +41,7 @@ public class driveTrain implements Subsystem {
                 false
         );
     }
-    DriverControlledCommand driveControl2 = new PedroDriverControlled(
+    public DriverControlledCommand driveControl2 = new PedroDriverControlled(
             Gamepads.gamepad1().leftStickY().negate(), //MAYBE NEGATE
                 Gamepads.gamepad1().leftStickX().negate(),
                 Gamepads.gamepad1().rightStickX().negate().mapToRange(place -> 0.8*place),

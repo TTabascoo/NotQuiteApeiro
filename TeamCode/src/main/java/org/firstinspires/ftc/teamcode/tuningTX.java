@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.shooterConstants.txRotationConstant;
+import static org.firstinspires.ftc.teamcode.constants.shooterConstants.txRotationConstant;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.bylazar.field.FieldManager;
@@ -8,6 +8,12 @@ import com.bylazar.field.PanelsField;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.constants.autoPathConstants;
+import org.firstinspires.ftc.teamcode.subsystems.driveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.intake;
+import org.firstinspires.ftc.teamcode.subsystems.locker;
+import org.firstinspires.ftc.teamcode.subsystems.shooter;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.CommandManager;

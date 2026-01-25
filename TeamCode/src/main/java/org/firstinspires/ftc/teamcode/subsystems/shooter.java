@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode;
-import static org.firstinspires.ftc.teamcode.shooterConstants.*;
+package org.firstinspires.ftc.teamcode.subsystems;
+import static org.firstinspires.ftc.teamcode.constants.shooterConstants.*;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -9,7 +9,6 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
 
 public class shooter implements Subsystem {
     public static final shooter INSTANCE = new shooter();

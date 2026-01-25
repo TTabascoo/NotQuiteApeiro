@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.constants;
 
 
 import com.bylazar.configurables.annotations.Configurable;
 
-import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
-import dev.nextftc.control.feedforward.FeedforwardElement;
 
 @Configurable
 public class shooterConstants {
