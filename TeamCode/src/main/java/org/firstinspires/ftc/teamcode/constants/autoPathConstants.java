@@ -10,6 +10,7 @@ public class autoPathConstants {
     public static final double pickUpAngle = Math.toRadians(0);
     public static final double finalAngle = Math.toRadians(180);
     public static Pose pose = new Pose();
+    public static final Pose blueGoalPose = new Pose(11, 138);
 
 
 }

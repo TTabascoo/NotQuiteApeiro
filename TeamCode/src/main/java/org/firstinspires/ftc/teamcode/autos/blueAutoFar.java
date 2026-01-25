@@ -42,15 +42,22 @@ public class blueAutoFar extends NextFTCOpMode {
     }
     private FieldManager panelsField = PanelsField.INSTANCE.getField();
     private Paths paths;
+    //INITIALIZE
     @Override
     public void onInit() {
+        //FIELD FOR DRAWING:
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
+        //TARGET FAR SHOOT (2050)
         shooter.INSTANCE.setTarget(2050);
+        //build baths
         paths = new Paths(PedroComponent.follower());
+        //set start pose
         PedroComponent.follower().setStartingPose(new Pose(56, 8, Math.toRadians(270)));
+        //stop ensure that shooter and intake stay off on init()
         shooter.INSTANCE.stop();
         intake.INSTANCE.rampOff().schedule();
     }
+    //Command to make things easier -> unsure if it works as intended, be careful when using
     public Command fullShoot() {
         return new SequentialGroup(
                 new InstantCommand(()-> shooter.INSTANCE.shoot()),
@@ -61,23 +68,24 @@ public class blueAutoFar extends NextFTCOpMode {
                 intake.INSTANCE.rampOff()
         );
     }
+    //full autnomous command
     public Command fullAuto() {
-        return new SequentialGroup(
-                new FollowPath(paths.Path1),
-                new InstantCommand(()-> shooter.INSTANCE.shoot()),
-                new WaitUntil(() -> shooter.INSTANCE.reachedTarget()),
-                intake.INSTANCE.rampOn(0.8),
-                new Delay(3),
-                new InstantCommand(() -> shooter.INSTANCE.stop()),
-                intake.INSTANCE.rampOff(),
-                new FollowPath(paths.Path2),
-                new FollowPath(paths.Path3).and(intake.INSTANCE.rampOn(1)),
-                intake.INSTANCE.rampOff(),
-                new FollowPath(paths.Path4),
-                new InstantCommand(()-> shooter.INSTANCE.shoot()),
-                new WaitUntil(() -> shooter.INSTANCE.reachedTarget()),
-                intake.INSTANCE.rampOn(0.8),
-                new Delay(3),
+        return new SequentialGroup( //sequential so one at a time
+                new FollowPath(paths.Path1), //path 1: go to shoot angle
+                new InstantCommand(()-> shooter.INSTANCE.shoot()), //instant command and lambda making bc it's a void
+                new WaitUntil(() -> shooter.INSTANCE.reachedTarget()), //delay until it reaches within a tolerance of velocity (aceleration time)
+                intake.INSTANCE.rampOn(0.8),  //turn on the intake
+                new Delay(3), //wait for shoot to finish
+                new InstantCommand(() -> shooter.INSTANCE.stop()), //stop running shooter
+                intake.INSTANCE.rampOff(), //stop running intake
+                new FollowPath(paths.Path2), //go to intake balls
+                new FollowPath(paths.Path3).and(intake.INSTANCE.rampOn(1)), //intake balls
+                intake.INSTANCE.rampOff(), //turn off intake
+                new FollowPath(paths.Path4), //go back to shoot
+                new InstantCommand(()-> shooter.INSTANCE.shoot()), //turn on shoot
+                new WaitUntil(() -> shooter.INSTANCE.reachedTarget()), // wait for acc
+                intake.INSTANCE.rampOn(0.8), //turn on intake
+                new Delay(3), // wait for shoot to finish repeat!:
                 new InstantCommand(() -> shooter.INSTANCE.stop()),
                 intake.INSTANCE.rampOff(),
                 new FollowPath(paths.Path5),
@@ -93,11 +101,14 @@ public class blueAutoFar extends NextFTCOpMode {
     }
     @Override
     public void onUpdate() {
+        //update follower() -> so it knows its position
         PedroComponent.follower().update();
+        //declare global pose as the followers pose -> on teleop it can start at the same pose
         autoPathConstants.pose = PedroComponent.follower().getPose();
+        //draw
         drawDebug(PedroComponent.follower());
     }
-
+    //PATH CLASS STRAIGHT FROM VISUALIZER
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;
@@ -179,6 +190,7 @@ public class blueAutoFar extends NextFTCOpMode {
                     .build();
         }
     }
+    //draw straight from pedro!
     public static final double ROBOT_RADIUS = 9; // woah
 
     private final Style robotLook = new Style(

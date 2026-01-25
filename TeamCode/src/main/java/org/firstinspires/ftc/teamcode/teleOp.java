@@ -63,11 +63,13 @@ public class teleOp extends NextFTCOpMode {
     public static double holdingPoseHeading;
     public double angle;
     public double turnAngle;
+    public Pose goalPose;
 
 
 
     @Override
     public void onStartButtonPressed() {
+        //reset binding manager, button maps
         driveActive = true;
         BindingManager.reset();
         shooter.INSTANCE.buttonMap();
@@ -80,6 +82,9 @@ public class teleOp extends NextFTCOpMode {
     }
     @Override
     public void onWaitForStart() {
+        //set the goal pose to be used later
+        //TODO MAKE IT SO U CAN CHANGE FROM BLUE to RED GOALS, OR ADD ANOTHER TELEOP
+        goalPose = autoPathConstants.blueGoalPose;
 //        telemetry.addLine("share for red!");
 //        telemetry.addLine("options for blue!");
 //        telemetry.update();
@@ -103,40 +108,53 @@ public class teleOp extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        //ON INIT: stop shooter, hardware map LL (no subsystem class made yet)
+        //start LL -> look at docs idk what to tell you here
+        shooter.INSTANCE.stop();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
         limelight.pipelineSwitch(1);
+        //set up field
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
+        //set starting pose as the global pose
         follower().setStartingPose(autoPathConstants.pose);
 
     }
 
     @Override
     public void onUpdate() {
+        //update bindingmanager -> able to actually use them
+        //update follower -> constantly updating position
+        //draw follower
         BindingManager.update();
         follower().update();
         drawDebug(follower());
-
+        //if left bumper press -> cancel driving command, driveActive false -> dt is not on
+        //update the bindingmanager to store change (idk if necessary)
         if(gamepad1.leftBumperWasPressed()) {
             driveActive = false;
-            turnOn = true;
             CommandManager.INSTANCE.cancelCommand(driveTrain.INSTANCE.driveControl2);
             BindingManager.update();
         }
-        if(turnOn && !follower().isLocalizationNAN()) {
+        //if the drive active is false and localizer is not null
+        // grab the pose constantly as well as the atan two of it
+        // create a path that goes to the same follower x y and with angle atan2 stuff (yay math)
+        //if you actually read this i owe u 32 cents
+        if(!driveActive && !follower().isLocalizationNAN()) {
             holdingPoseX = follower().getPose().getX();
             holdingPoseY = follower().getPose().getY();
             holdingPoseHeading = Math.toDegrees(follower().getPose().getHeading());
-            angle = Math.atan2(138-holdingPoseY, 11-holdingPoseX);
+            angle = Math.atan2(goalPose.getY()-holdingPoseY, goalPose.getX()-holdingPoseX);
 
             selfPath = follower().pathBuilder().addPath(new BezierPoint(new Pose(holdingPoseX, holdingPoseY))).setConstantHeadingInterpolation(angle).build();
             follower().followPath(selfPath, true);
         }
 
-
+        //if the right bumper was pressed
+        //resechedule dt and make drive active true again
+        //break following to stop following that path
         if(gamepad1.rightBumperWasPressed()) {
-            turnOn = false;
             CommandManager.INSTANCE.scheduleCommand(driveTrain.INSTANCE.driveControl2);
             driveActive = true;
             follower().breakFollowing();
@@ -195,12 +213,13 @@ public class teleOp extends NextFTCOpMode {
 //            follower().breakFollowing();
 //        }
 //        follower().update();
+        // telemetry stuff
         telemetry.addData("drive active ? ", driveActive);
         telemetry.addData("command", CommandManager.INSTANCE.snapshot());
         telemetry.addData("follower x", follower().getPose());
         telemetry.addData("holding pose", holdingPose);
         telemetry.addData("holding angle", angleForScoring);
-
+        telemetry.addData("goal pose", goalPose);
 
         telemetry.addData("is turning", follower().isTurning());
         telemetry.addData("is busy ", follower().isBusy());
